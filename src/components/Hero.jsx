@@ -1,9 +1,27 @@
-import React from 'react';
-import { ArrowRight, MessageSquare, Sparkles, MapPin, CheckCircle2, ChevronDown } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ArrowRight, MessageSquare, Sparkles, MapPin, CheckCircle2, ChevronDown, Layers, Play } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import HeroThreeScene from './HeroThreeScene';
 import { soundManager } from '../utils/sound';
 
 export default function Hero({ onOpenEnquiry }) {
+  const [tickerIndex, setTickerIndex] = useState(0);
+
+  const specializations = [
+    'Heavy Star Flex Printing',
+    '3D Acrylic LED Signboards',
+    'Precision Vinyl Sticker Cutting',
+    'Luxury Matte Visiting Cards',
+    'Direct Design-to-Press Lab'
+  ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTickerIndex((prev) => (prev + 1) % specializations.length);
+    }, 2800);
+    return () => clearInterval(timer);
+  }, [specializations.length]);
+
   const handleScrollToServices = (e) => {
     e.preventDefault();
     soundManager.playClick();
@@ -14,7 +32,7 @@ export default function Hero({ onOpenEnquiry }) {
   return (
     <section
       id="home"
-      className="relative min-h-[720px] max-h-[960px] h-screen flex items-center justify-center pt-24 pb-16 overflow-hidden overflow-x-clip bg-[#FAF9FC] bg-grid-diagonal w-full max-w-[100vw]"
+      className="relative min-h-[740px] max-h-[980px] h-screen flex items-center justify-center pt-24 pb-16 overflow-hidden overflow-x-clip bg-[#FAF9FC] bg-grid-diagonal w-full max-w-[100vw]"
     >
       {/* 3D WebGL Three.js Canvas Scene (Bright Studio) */}
       <HeroThreeScene />
@@ -23,16 +41,15 @@ export default function Hero({ onOpenEnquiry }) {
       <div className="absolute top-0 right-0 w-[350px] sm:w-[600px] h-[500px] bg-gradient-to-b from-white/80 via-[#F3ECFA]/30 to-transparent blur-3xl pointer-events-none" />
 
       {/* Hero Foreground Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-6">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-4">
         <div className="max-w-3xl">
 
-          {/* Location & Studio Badge - Clean Bright Luxury */}
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-white/90 border border-[#EAE3F1] shadow-[0_2px_12px_rgba(53,32,79,0.06)] backdrop-blur-md mb-6 max-w-full">
-            <span className="flex h-2 w-2 relative shrink-0">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#8E63CB] opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#5A2D91]" />
-            </span>
-            <span className="text-[10px] sm:text-xs uppercase tracking-[0.14em] sm:tracking-[0.2em] font-semibold text-[#5A2D91] truncate">
+          {/* Location & Studio Badge with Official Monogram */}
+          <div className="inline-flex items-center gap-2.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-white/95 border border-[#EAE3F1] shadow-[0_4px_16px_rgba(53,32,79,0.06)] backdrop-blur-md mb-5 max-w-full">
+            <div className="w-5 h-5 rounded-full bg-white border border-[#EAE3F1] p-0.5 flex items-center justify-center shrink-0">
+              <img src="/logo-monogram.svg" alt="Icon" className="w-full h-full object-contain" />
+            </div>
+            <span className="text-[10px] sm:text-xs uppercase tracking-[0.16em] sm:tracking-[0.2em] font-bold text-[#5A2D91] truncate">
               Graphix Studio • Melapalayam
             </span>
             <span className="hidden sm:inline-block text-[#8A7E99]">•</span>
@@ -42,8 +59,29 @@ export default function Hero({ onOpenEnquiry }) {
             </span>
           </div>
 
-          {/* Main Headline - Bold Deep Purple Display Typography */}
-          <h1 className="text-3xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-[#35204F] leading-[1.08] mb-5 sm:mb-6">
+          {/* Kinetic Word Rotating Ticker (More Animation in Text) */}
+          <div className="flex items-center gap-2 mb-3 text-xs sm:text-sm font-semibold text-[#625B69]">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#F3ECFA] text-[#5A2D91] text-[11px] font-bold tracking-wider uppercase">
+              <Sparkles className="w-3 h-3" /> Specializing In
+            </span>
+            <div className="h-6 overflow-hidden relative inline-block min-w-[200px]">
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={tickerIndex}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -16 }}
+                  transition={{ duration: 0.35, ease: 'easeOut' }}
+                  className="font-bold text-[#35204F] inline-block"
+                >
+                  {specializations[tickerIndex]}
+                </motion.span>
+              </AnimatePresence>
+            </div>
+          </div>
+
+          {/* Main Headline - Bold Deep Purple Display Typography with Kinetic Reveal */}
+          <h1 className="text-3xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-[#35204F] leading-[1.08] mb-4 sm:mb-5">
             YOUR IDEAS.{' '}
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#35204F] via-[#5A2D91] to-[#8E63CB]">
@@ -51,13 +89,16 @@ export default function Hero({ onOpenEnquiry }) {
             </span>
           </h1>
 
-          {/* Supporting Text */}
-          <p className="text-sm sm:text-xl md:text-2xl font-semibold text-[#35204F] mb-3 sm:mb-4 tracking-wide max-w-2xl">
-            Creative Design. Professional Printing. Powerful Brand Identity.
-          </p>
+          {/* Official Tagline with High-Impact Letter Spacing */}
+          <div className="inline-flex items-center gap-2 text-xs sm:text-sm md:text-base font-extrabold tracking-[0.22em] text-[#5A2D91] uppercase mb-3">
+            <span>CREATE VISIBILITY</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-[#8E63CB]" />
+            <span>BUILD IDENTITY</span>
+          </div>
 
+          {/* Supporting Text */}
           <p className="text-xs sm:text-base text-[#625B69] max-w-xl leading-relaxed mb-8">
-            Melapalayam's flagship creative studio combining high-aesthetic graphic design with state-of-the-art flex, vinyl, 3D LED signage, visiting cards, and promotional print engineering.
+            Melapalayam's flagship creative design and high-precision print production lab. From heavy-duty star flex banners and 3D acrylic LED signage to luxury visiting cards and custom corporate gifts.
           </p>
 
           {/* Action Buttons */}

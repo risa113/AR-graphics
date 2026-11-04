@@ -63,44 +63,30 @@ export default function Header({ onOpenEnquiry }) {
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 w-full">
         <div className="flex items-center justify-between w-full">
           
-          {/* Logo with Graphic Monogram (Purple & Deep Purple Text) */}
+          {/* Logo with Polished AR Monogram */}
           <a
             href="#home"
             onClick={() => handleLinkClick('home')}
             onMouseEnter={() => soundManager.playHover()}
-            className="group flex items-center gap-2 sm:gap-3 focus:outline-none shrink-0"
+            className="group flex items-center gap-2.5 sm:gap-3.5 focus:outline-none shrink-0"
           >
-            {/* Logo Icon */}
-            <div className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-[#8E63CB] via-[#5A2D91] to-[#35204F] p-[1.5px] transition-transform duration-300 group-hover:scale-105 shadow-[0_4px_14px_rgba(90,45,145,0.2)]">
-              <div className="w-full h-full bg-white rounded-[9px] sm:rounded-[10px] flex items-center justify-center relative overflow-hidden">
-                <svg
-                  className="w-4 h-4 sm:w-6 sm:h-6 transition-transform duration-500 group-hover:rotate-12"
-                  viewBox="0 0 100 100"
-                  fill="none"
-                >
-                  <path
-                    d="M 64 34 C 58 26 44 25 36 33 C 25 43 25 61 36 71 C 46 80 62 76 68 67 C 71 63 71 54 71 52 L 48 52 L 48 44 L 79 44 C 79 56 78 69 70 77 C 60 88 40 89 28 78 C 14 65 14 41 28 27 C 41 15 62 16 73 27 Z"
-                    fill="url(#headerBrightLogoGrad)"
-                  />
-                  <circle cx="50" cy="50" r="5" fill="#5A2D91" />
-                  <defs>
-                    <linearGradient id="headerBrightLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#8E63CB" />
-                      <stop offset="100%" stopColor="#5A2D91" />
-                    </linearGradient>
-                  </defs>
-                </svg>
-              </div>
+            {/* Logo Monogram Box */}
+            <div className="relative w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-white border border-[#EAE3F1] shadow-[0_4px_16px_rgba(90,45,145,0.12)] p-1.5 transition-all duration-300 group-hover:scale-105 group-hover:shadow-[0_6px_20px_rgba(90,45,145,0.22)] group-hover:border-[#D8C2F0] flex items-center justify-center overflow-hidden">
+              <img
+                src="/logo-monogram.svg"
+                alt="GRAPHIX Logo"
+                className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110"
+              />
             </div>
 
             {/* Brand Text */}
             <div className="flex flex-col">
-              <span className="font-extrabold text-base sm:text-xl tracking-[0.12em] sm:tracking-[0.14em] text-[#35204F] flex items-center gap-1">
+              <span className="font-black text-base sm:text-xl tracking-[0.12em] sm:tracking-[0.14em] text-[#35204F] flex items-center gap-1">
                 GRAPHIX
                 <span className="w-1.5 h-1.5 rounded-full bg-[#8E63CB]" />
               </span>
-              <span className="text-[8px] sm:text-[9.5px] uppercase tracking-[0.16em] sm:tracking-[0.2em] text-[#625B69] font-medium -mt-0.5">
-                Design & Print Studio
+              <span className="text-[7.5px] sm:text-[9px] uppercase tracking-[0.22em] text-[#5A2D91] font-bold -mt-0.5">
+                Create Visibility • Build Identity
               </span>
             </div>
           </a>

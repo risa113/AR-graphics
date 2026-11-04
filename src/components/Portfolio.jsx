@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Eye, Sparkles, X, Check, ArrowRight, Palette } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { Eye, Sparkles, X, Check, ArrowRight, Palette, ChevronLeft, ChevronRight, SlidersHorizontal, LayoutGrid } from 'lucide-react';
 import { portfolioCategories, portfolioItems } from '../data/portfolioData';
 import ServiceMockup3D from './ServiceMockup3D';
 import { soundManager } from '../utils/sound';
@@ -7,17 +7,35 @@ import { soundManager } from '../utils/sound';
 export default function Portfolio({ onRequestSimilar }) {
   const [activeCategory, setActiveCategory] = useState('All');
   const [selectedProject, setSelectedProject] = useState(null);
+  const [viewMode, setViewMode] = useState('slider'); // 'slider' | 'grid'
+  const sliderRef = useRef(null);
 
   const filteredItems = portfolioItems.filter((item) =>
     activeCategory === 'All' ? true : item.category === activeCategory
   );
+
+  const slideLeft = () => {
+    soundManager.playClick();
+    if (sliderRef.current) {
+      const cardWidth = sliderRef.current.offsetWidth > 768 ? 420 : 320;
+      sliderRef.current.scrollBy({ left: -cardWidth, behavior: 'smooth' });
+    }
+  };
+
+  const slideRight = () => {
+    soundManager.playClick();
+    if (sliderRef.current) {
+      const cardWidth = sliderRef.current.offsetWidth > 768 ? 420 : 320;
+      sliderRef.current.scrollBy({ left: cardWidth, behavior: 'smooth' });
+    }
+  };
 
   return (
     <section id="work" className="relative py-28 bg-[#FAF9FC] border-t border-[#EAE3F1] overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
           <div>
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#EAE3F1] text-[#5A2D91] text-xs uppercase tracking-[0.2em] font-bold mb-4 shadow-sm">
               <Sparkles className="w-3.5 h-3.5 text-[#8E63CB]" />
@@ -38,77 +56,135 @@ export default function Portfolio({ onRequestSimilar }) {
           </p>
         </div>
 
-        {/* Categories Bar */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-10 no-scrollbar">
-          {portfolioCategories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => {
-                soundManager.playClick();
-                setActiveCategory(cat);
-              }}
-              onMouseEnter={() => soundManager.playHover()}
-              className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all duration-300 ${
-                activeCategory === cat
-                  ? 'bg-[#5A2D91] text-white shadow-sm scale-105'
-                  : 'bg-white text-[#625B69] hover:text-[#35204F] hover:bg-[#F3ECFA] border border-[#EAE3F1]'
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
+        {/* Toolbar: Categories + View Switcher & Slide Arrows */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+          {/* Categories Bar */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
+            {portfolioCategories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => {
+                  soundManager.playClick();
+                  setActiveCategory(cat);
+                  if (sliderRef.current) sliderRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+                }}
+                onMouseEnter={() => soundManager.playHover()}
+                className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all duration-300 ${
+                  activeCategory === cat
+                    ? 'bg-[#5A2D91] text-white shadow-sm scale-105'
+                    : 'bg-white text-[#625B69] hover:text-[#35204F] hover:bg-[#F3ECFA] border border-[#EAE3F1]'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+
+          {/* Controls: Mode & Slide Arrows */}
+          <div className="flex items-center gap-3 self-start sm:self-auto">
+            <div className="flex items-center p-1 rounded-full bg-white border border-[#EAE3F1] shadow-sm">
+              <button
+                onClick={() => {
+                  soundManager.playClick();
+                  setViewMode('slider');
+                }}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                  viewMode === 'slider'
+                    ? 'bg-[#5A2D91] text-white shadow-sm'
+                    : 'text-[#625B69] hover:text-[#35204F]'
+                }`}
+              >
+                <SlidersHorizontal className="w-3.5 h-3.5" />
+                <span>Card Slides</span>
+              </button>
+              <button
+                onClick={() => {
+                  soundManager.playClick();
+                  setViewMode('grid');
+                }}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                  viewMode === 'grid'
+                    ? 'bg-[#5A2D91] text-white shadow-sm'
+                    : 'text-[#625B69] hover:text-[#35204F]'
+                }`}
+              >
+                <LayoutGrid className="w-3.5 h-3.5" />
+                <span>Grid</span>
+              </button>
+            </div>
+
+            {viewMode === 'slider' && (
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={slideLeft}
+                  onMouseEnter={() => soundManager.playHover()}
+                  className="p-2 rounded-full bg-white hover:bg-[#FAF9FC] border border-[#EAE3F1] hover:border-[#D8C2F0] text-[#35204F] shadow-sm transition-all active:scale-95"
+                  title="Slide Left"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={slideRight}
+                  onMouseEnter={() => soundManager.playHover()}
+                  className="p-2 rounded-full bg-white hover:bg-[#FAF9FC] border border-[#EAE3F1] hover:border-[#D8C2F0] text-[#35204F] shadow-sm transition-all active:scale-95"
+                  title="Slide Right"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Asymmetric Masonry Showcase Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-          {filteredItems.map((item, index) => (
-            <div
-              key={item.id}
-              onClick={() => {
-                soundManager.playClick();
-                setSelectedProject(item);
-              }}
-              className={`group cursor-pointer rounded-2xl bg-white border border-[#EAE3F1] hover:border-[#D8C2F0] p-5 flex flex-col justify-between transition-all duration-500 hover:-translate-y-1.5 shadow-[0_4px_20px_rgba(53,32,79,0.04)] hover:shadow-[0_16px_36px_rgba(90,45,145,0.12)] ${
-                index === 0 ? 'md:col-span-2 lg:col-span-2' : ''
-              }`}
-            >
-              {/* Product Visual Mockup */}
-              <div className="relative rounded-xl overflow-hidden mb-5">
-                <ServiceMockup3D
-                  type={item.previewType}
-                  title={item.title}
-                  isHovered={false}
-                />
-                
-                {/* Hover overlay pill */}
-                <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                  <div className="px-4 py-2 rounded-full bg-[#5A2D91] text-white text-xs font-bold flex items-center gap-2 shadow-md">
-                    <Eye className="w-3.5 h-3.5" />
-                    <span>View Specifications</span>
+        {/* 1. CARDS SLIDES VIEW */}
+        {viewMode === 'slider' && (
+          <div
+            ref={sliderRef}
+            className="flex items-stretch gap-6 overflow-x-auto pb-6 pt-2 snap-x snap-mandatory scroll-smooth no-scrollbar"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
+            {filteredItems.map((item) => (
+              <div
+                key={item.id}
+                onClick={() => {
+                  soundManager.playClick();
+                  setSelectedProject(item);
+                }}
+                className="w-[85vw] sm:w-[380px] lg:w-[410px] shrink-0 snap-center group cursor-pointer rounded-2xl bg-white border border-[#EAE3F1] hover:border-[#D8C2F0] p-5 flex flex-col justify-between transition-all duration-500 hover:-translate-y-2 shadow-[0_4px_20px_rgba(53,32,79,0.04)] hover:shadow-[0_20px_40px_rgba(90,45,145,0.14)]"
+              >
+                <div>
+                  <div className="relative rounded-xl overflow-hidden mb-5">
+                    <ServiceMockup3D
+                      type={item.previewType}
+                      title={item.title}
+                      isHovered={false}
+                    />
+                    <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                      <div className="px-4 py-2 rounded-full bg-[#5A2D91] text-white text-xs font-bold flex items-center gap-2 shadow-md">
+                        <Eye className="w-3.5 h-3.5" />
+                        <span>View Specifications</span>
+                      </div>
+                    </div>
                   </div>
+
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[10px] uppercase font-bold tracking-widest text-[#5A2D91]">
+                      {item.category}
+                    </span>
+                    <span className="text-[10px] font-mono text-[#8A7E99]">
+                      {item.clientType}
+                    </span>
+                  </div>
+
+                  <h3 className="text-lg sm:text-xl font-bold text-[#35204F] mb-1.5 group-hover:text-[#5A2D91] transition-colors">
+                    {item.title}
+                  </h3>
+
+                  <p className="text-xs text-[#625B69] line-clamp-2 mb-4 leading-relaxed">
+                    {item.description}
+                  </p>
                 </div>
-              </div>
 
-              {/* Card Meta Content */}
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] uppercase font-bold tracking-widest text-[#5A2D91]">
-                    {item.category}
-                  </span>
-                  <span className="text-[10px] font-mono text-[#8A7E99]">
-                    {item.clientType}
-                  </span>
-                </div>
-
-                <h3 className="text-lg sm:text-xl font-bold text-[#35204F] mb-1.5 group-hover:text-[#5A2D91] transition-colors">
-                  {item.title}
-                </h3>
-
-                <p className="text-xs text-[#625B69] line-clamp-2 mb-4 leading-relaxed">
-                  {item.description}
-                </p>
-
-                {/* Footer specs pill */}
                 <div className="flex items-center justify-between pt-3 border-t border-[#EAE3F1] text-[11px] text-[#625B69]">
                   <span className="font-mono">{item.dimensions}</span>
                   <span className="flex items-center gap-1 text-[#5A2D91] font-bold group-hover:translate-x-1 transition-transform">
@@ -117,9 +193,69 @@ export default function Portfolio({ onRequestSimilar }) {
                   </span>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
+
+        {/* 2. MASONRY GRID VIEW */}
+        {viewMode === 'grid' && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            {filteredItems.map((item, index) => (
+              <div
+                key={item.id}
+                onClick={() => {
+                  soundManager.playClick();
+                  setSelectedProject(item);
+                }}
+                className={`group cursor-pointer rounded-2xl bg-white border border-[#EAE3F1] hover:border-[#D8C2F0] p-5 flex flex-col justify-between transition-all duration-500 hover:-translate-y-1.5 shadow-[0_4px_20px_rgba(53,32,79,0.04)] hover:shadow-[0_16px_36px_rgba(90,45,145,0.12)] ${
+                  index === 0 ? 'md:col-span-2 lg:col-span-2' : ''
+                }`}
+              >
+                <div className="relative rounded-xl overflow-hidden mb-5">
+                  <ServiceMockup3D
+                    type={item.previewType}
+                    title={item.title}
+                    isHovered={false}
+                  />
+                  
+                  <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <div className="px-4 py-2 rounded-full bg-[#5A2D91] text-white text-xs font-bold flex items-center gap-2 shadow-md">
+                      <Eye className="w-3.5 h-3.5" />
+                      <span>View Specifications</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[10px] uppercase font-bold tracking-widest text-[#5A2D91]">
+                      {item.category}
+                    </span>
+                    <span className="text-[10px] font-mono text-[#8A7E99]">
+                      {item.clientType}
+                    </span>
+                  </div>
+
+                  <h3 className="text-lg sm:text-xl font-bold text-[#35204F] mb-1.5 group-hover:text-[#5A2D91] transition-colors">
+                    {item.title}
+                  </h3>
+
+                  <p className="text-xs text-[#625B69] line-clamp-2 mb-4 leading-relaxed">
+                    {item.description}
+                  </p>
+
+                  <div className="flex items-center justify-between pt-3 border-t border-[#EAE3F1] text-[11px] text-[#625B69]">
+                    <span className="font-mono">{item.dimensions}</span>
+                    <span className="flex items-center gap-1 text-[#5A2D91] font-bold group-hover:translate-x-1 transition-transform">
+                      <span>Inspect</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
       </div>
 

@@ -32,47 +32,46 @@ export default function Preloader({ onComplete }) {
 
       <div className="relative z-10 flex flex-col items-center">
         {/* Animated Monogram Logo */}
-        <div className="relative w-20 h-20 mb-5">
-          <svg className="w-full h-full" viewBox="0 0 100 100" fill="none">
+        <div className="relative w-24 h-24 mb-6 flex items-center justify-center">
+          <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" fill="none">
             <circle
               cx="50"
               cy="50"
-              r="44"
+              r="46"
               stroke="#EAE3F1"
-              strokeWidth="2"
+              strokeWidth="2.5"
             />
             <circle
               cx="50"
               cy="50"
-              r="44"
+              r="46"
               stroke="#5A2D91"
-              strokeWidth="2"
-              strokeDasharray="280"
-              strokeDashoffset={280 - (percent / 100) * 280}
+              strokeWidth="3"
+              strokeDasharray="290"
+              strokeDashoffset={290 - (percent / 100) * 290}
+              strokeLinecap="round"
               className="transition-all duration-150"
             />
-            <path
-              d="M 64 34 C 58 26 44 25 36 33 C 25 43 25 61 36 71 C 46 80 62 76 68 67 C 71 63 71 54 71 52 L 48 52 L 48 44 L 79 44 C 79 56 78 69 70 77 C 60 88 40 89 28 78 C 14 65 14 41 28 27 C 41 15 62 16 73 27 Z"
-              fill="url(#preloaderBrightGrad)"
-            />
-            <circle cx="50" cy="50" r="4.5" fill="#5A2D91" />
-            <defs>
-              <linearGradient id="preloaderBrightGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#8E63CB" />
-                <stop offset="100%" stopColor="#5A2D91" />
-              </linearGradient>
-            </defs>
           </svg>
+
+          {/* Polished AR Monogram in Center */}
+          <div className="w-14 h-14 p-1.5 flex items-center justify-center">
+            <img
+              src="/logo-monogram.svg"
+              alt="GRAPHIX Monogram"
+              className="w-full h-full object-contain filter drop-shadow-sm scale-95"
+            />
+          </div>
         </div>
 
         {/* Brand Name */}
-        <h1 className="text-xl font-black tracking-[0.22em] text-[#35204F] flex items-center gap-2 mb-1">
+        <h1 className="text-2xl font-black tracking-[0.22em] text-[#35204F] flex items-center gap-2 mb-1.5">
           GRAPHIX
           <span className="w-2 h-2 rounded-full bg-[#8E63CB]" />
         </h1>
 
-        <p className="text-[10px] uppercase tracking-[0.28em] text-[#625B69] mb-5 font-semibold">
-          Melapalayam • Tirunelveli
+        <p className="text-[10px] uppercase tracking-[0.28em] text-[#5A2D91] mb-5 font-bold">
+          Create Visibility • Build Identity
         </p>
 
         {/* Progress Bar & Percentage */}

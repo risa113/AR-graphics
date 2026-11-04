@@ -20,31 +20,21 @@ export default function Footer({ onSelectService }) {
           <div className="lg:col-span-4 space-y-5">
             
             {/* Logo */}
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#8E63CB] to-[#5A2D91] p-[1.5px] shadow-sm">
-                <div className="w-full h-full bg-white rounded-[10px] flex items-center justify-center">
-                  <svg className="w-6 h-6" viewBox="0 0 100 100" fill="none">
-                    <path
-                      d="M 64 34 C 58 26 44 25 36 33 C 25 43 25 61 36 71 C 46 80 62 76 68 67 C 71 63 71 54 71 52 L 48 52 L 48 44 L 79 44 C 79 56 78 69 70 77 C 60 88 40 89 28 78 C 14 65 14 41 28 27 C 41 15 62 16 73 27 Z"
-                      fill="url(#footerBrightLogoGrad)"
-                    />
-                    <circle cx="50" cy="50" r="5" fill="#5A2D91" />
-                    <defs>
-                      <linearGradient id="footerBrightLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor="#8E63CB" />
-                        <stop offset="100%" stopColor="#5A2D91" />
-                      </linearGradient>
-                    </defs>
-                  </svg>
-                </div>
+            <div className="flex items-center gap-3.5">
+              <div className="w-11 h-11 rounded-xl bg-white border border-[#EAE3F1] shadow-sm p-1.5 flex items-center justify-center">
+                <img
+                  src="/logo-monogram.svg"
+                  alt="GRAPHIX Logo"
+                  className="w-full h-full object-contain"
+                />
               </div>
 
               <div>
-                <span className="font-extrabold text-xl tracking-[0.14em] text-[#35204F] block">
+                <span className="font-black text-xl tracking-[0.14em] text-[#35204F] block">
                   GRAPHIX
                 </span>
-                <span className="text-[9px] uppercase tracking-[0.22em] text-[#625B69] font-medium block">
-                  Creative Design & Print Lab
+                <span className="text-[9px] uppercase tracking-[0.24em] text-[#5A2D91] font-bold block">
+                  Create Visibility • Build Identity
                 </span>
               </div>
             </div>
