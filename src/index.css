@@ -29,8 +29,59 @@ html, body {
   color: #35204F;
   overflow-x: hidden;
   overflow-x: clip;
-  scroll-behavior: smooth;
   font-family: 'Poppins', sans-serif;
+}
+
+/* Lenis Smooth Scroll Recommended Rules */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+/* SplitType Masking Helpers */
+.split-line {
+  overflow: hidden;
+  display: block;
+}
+
+.split-word {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+.split-char {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+/* Clip-Path Reveal Utilities */
+.clip-path-reveal {
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.clip-path-reveal.is-revealed {
+  clip-path: inset(0 0 0% 0);
+}
+
+/* Perspective Cards Tilt Container */
+.perspective-container {
+  perspective: 1200px;
 }
 
 #root {

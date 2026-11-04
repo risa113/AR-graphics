@@ -1,29 +1,47 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 export default function Preloader({ onComplete }) {
   const [percent, setPercent] = useState(0);
   const [exiting, setExiting] = useState(false);
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
 
   useEffect(() => {
+    let current = 0;
     const interval = setInterval(() => {
-      setPercent((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setTimeout(() => setExiting(true), 150);
-          setTimeout(() => onComplete && onComplete(), 550);
-          return 100;
-        }
-        const step = Math.floor(Math.random() * 16) + 12;
-        return Math.min(prev + step, 100);
-      });
-    }, 35);
+      current += 8;
+      if (current >= 100) {
+        current = 100;
+        setPercent(100);
+        clearInterval(interval);
+        setTimeout(() => setExiting(true), 100);
+        setTimeout(() => {
+          if (onCompleteRef.current) onCompleteRef.current();
+        }, 300);
+      } else {
+        setPercent(current);
+      }
+    }, 25);
 
-    return () => clearInterval(interval);
-  }, [onComplete]);
+    // Guaranteed fallback after 1.4s
+    const fallback = setTimeout(() => {
+      clearInterval(interval);
+      setPercent(100);
+      setExiting(true);
+      setTimeout(() => {
+        if (onCompleteRef.current) onCompleteRef.current();
+      }, 200);
+    }, 1400);
+
+    return () => {
+      clearInterval(interval);
+      clearTimeout(fallback);
+    };
+  }, []);
 
   return (
     <div
-      className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#FAF9FC] transition-all duration-700 ${
+      className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#FAF9FC] transition-all duration-500 ${
         exiting ? 'opacity-0 pointer-events-none scale-105' : 'opacity-100'
       }`}
     >
@@ -50,7 +68,7 @@ export default function Preloader({ onComplete }) {
               strokeDasharray="290"
               strokeDashoffset={290 - (percent / 100) * 290}
               strokeLinecap="round"
-              className="transition-all duration-150"
+              className="transition-all duration-75"
             />
           </svg>
 
@@ -70,21 +88,23 @@ export default function Preloader({ onComplete }) {
           <span className="w-2 h-2 rounded-full bg-[#8E63CB]" />
         </h1>
 
-        <p className="text-[10px] uppercase tracking-[0.28em] text-[#5A2D91] mb-5 font-bold">
-          Create Visibility • Build Identity
-        </p>
+        {/* Tagline */}
+        <span className="text-[10px] uppercase font-mono tracking-[0.28em] text-[#5A2D91] font-bold mb-6">
+          CREATE VISIBILITY • BUILD IDENTITY
+        </span>
 
-        {/* Progress Bar & Percentage */}
-        <div className="w-52 h-[3px] bg-[#EAE3F1] rounded-full overflow-hidden relative mb-2.5">
+        {/* Loading Bar Track */}
+        <div className="w-48 h-1 bg-[#EAE3F1] rounded-full overflow-hidden relative mb-3">
           <div
-            className="h-full bg-gradient-to-r from-[#5A2D91] to-[#8E63CB] rounded-full transition-all duration-100"
+            className="h-full bg-gradient-to-r from-[#5A2D91] via-[#8E63CB] to-[#D8C2F0] transition-all duration-75 ease-out"
             style={{ width: `${percent}%` }}
           />
         </div>
 
-        <div className="flex items-center justify-between w-52 text-[10px] font-mono text-[#8A7E99]">
-          <span>CALIBRATING STUDIO</span>
-          <span className="font-bold text-[#35204F]">{percent}%</span>
+        {/* Status Text & Numerical Percentage */}
+        <div className="flex items-center justify-between w-48 text-[9px] font-mono text-[#8A7E99] uppercase tracking-wider">
+          <span>Calibrating Studio</span>
+          <span className="text-[#5A2D91] font-bold">{percent}%</span>
         </div>
       </div>
     </div>

@@ -1,8 +1,21 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Sparkles, MapPin, CheckCircle2, ArrowRight } from 'lucide-react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import SplitType from 'split-type';
 import { soundManager } from '../utils/sound';
 
+gsap.registerPlugin(ScrollTrigger);
+
 export default function About({ onOpenEnquiry }) {
+  const sectionRef = useRef(null);
+  const headlineSolidRef = useRef(null);
+  const headlineGradientRef = useRef(null);
+  const leftVisualRef = useRef(null);
+  const rightContentRef = useRef(null);
+  const workflowRef = useRef(null);
+  const stepCardsRef = useRef([]);
+
   const steps = [
     {
       num: '01',
@@ -30,8 +43,128 @@ export default function About({ onOpenEnquiry }) {
     }
   ];
 
+  useEffect(() => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
+    let splitTitle = null;
+
+    const ctx = gsap.context(() => {
+      const isMobile = window.innerWidth < 768;
+      const xDistance = isMobile ? 25 : 55;
+
+      // 1. Headline Solid SplitType Reveal
+      if (headlineSolidRef.current) {
+        splitTitle = new SplitType(headlineSolidRef.current, { types: 'lines,words' });
+        if (splitTitle.words && splitTitle.words.length > 0) {
+          gsap.fromTo(
+            splitTitle.words,
+            { opacity: 0, y: 35, filter: 'blur(4px)' },
+            {
+              opacity: 1,
+              y: 0,
+              filter: 'blur(0px)',
+              duration: 0.85,
+              stagger: 0.03,
+              ease: 'power3.out',
+              scrollTrigger: {
+                trigger: headlineSolidRef.current,
+                start: 'top 88%',
+                toggleActions: 'play none none none'
+              }
+            }
+          );
+        }
+      }
+
+      // 1b. Headline Gradient Slide up from mask
+      if (headlineGradientRef.current) {
+        gsap.fromTo(
+          headlineGradientRef.current,
+          { opacity: 0, y: '100%' },
+          {
+            opacity: 1,
+            y: '0%',
+            duration: 0.9,
+            ease: 'expo.out',
+            scrollTrigger: {
+              trigger: headlineSolidRef.current || headlineGradientRef.current,
+              start: 'top 88%',
+              toggleActions: 'play none none none'
+            }
+          }
+        );
+      }
+
+      // 2. Left Brand Visual Card: Slide from Left
+      if (leftVisualRef.current) {
+        gsap.fromTo(
+          leftVisualRef.current,
+          { opacity: 0, x: -xDistance },
+          {
+            opacity: 1,
+            x: 0,
+            duration: 0.9,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: leftVisualRef.current,
+              start: 'top 82%',
+              toggleActions: 'play none none none'
+            }
+          }
+        );
+      }
+
+      // 3. Right Brand Content: Slide from Right
+      if (rightContentRef.current) {
+        gsap.fromTo(
+          rightContentRef.current,
+          { opacity: 0, x: xDistance },
+          {
+            opacity: 1,
+            x: 0,
+            duration: 0.9,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: rightContentRef.current,
+              start: 'top 82%',
+              toggleActions: 'play none none none'
+            }
+          }
+        );
+      }
+
+      // 4. Staggered 4-Step Process Workflow Cards
+      const validStepCards = stepCardsRef.current.filter(Boolean);
+      if (validStepCards.length > 0) {
+        gsap.fromTo(
+          validStepCards,
+          { opacity: 0, y: 40, scale: 0.95 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.8,
+            stagger: 0.12,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: workflowRef.current,
+              start: 'top 85%',
+              toggleActions: 'play none none none'
+            }
+          }
+        );
+      }
+    }, sectionRef);
+
+    return () => {
+      if (splitTitle) splitTitle.revert();
+      ctx.revert();
+    };
+  }, []);
+
   return (
-    <section id="about" className="relative py-28 bg-white overflow-hidden">
+    <section ref={sectionRef} id="about" className="relative py-28 bg-white overflow-hidden">
       {/* Background Studio Light Wash */}
       <div className="absolute top-1/2 left-0 w-[500px] h-[500px] bg-[#F3ECFA]/40 blur-[130px] pointer-events-none" />
 
@@ -43,13 +176,20 @@ export default function About({ onOpenEnquiry }) {
           <span>About GRAPHIX</span>
         </div>
 
-        {/* Big Signature Headline */}
+        {/* Big Signature Headline with SplitType */}
         <div className="max-w-4xl mb-16">
           <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-[#35204F] tracking-tight leading-[1.08] mb-6">
-            WE TURN IDEAS INTO{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#35204F] via-[#5A2D91] to-[#8E63CB]">
-              VISUAL EXPERIENCES.
+            <span ref={headlineSolidRef} className="block">
+              WE TURN IDEAS INTO
             </span>
+            <div className="overflow-hidden">
+              <span
+                ref={headlineGradientRef}
+                className="block text-transparent bg-clip-text bg-gradient-to-r from-[#35204F] via-[#5A2D91] to-[#8E63CB]"
+              >
+                VISUAL EXPERIENCES.
+              </span>
+            </div>
           </h2>
 
           <p className="text-base sm:text-xl text-[#625B69] leading-relaxed font-normal">
@@ -60,34 +200,34 @@ export default function About({ onOpenEnquiry }) {
         {/* Two Column Brand Story Composition */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center mb-24">
           
-          {/* Left Visual Brand Graphic Composition */}
-          <div className="lg:col-span-5 relative">
-            <div className="relative rounded-3xl bg-[#FAF9FC] border border-[#EAE3F1] p-8 shadow-sm overflow-hidden">
+          {/* Left Visual Brand Graphic Composition - Slide From Left */}
+          <div ref={leftVisualRef} className="lg:col-span-5 relative will-change-transform">
+            <div className="relative rounded-3xl bg-[#FAF9FC] border border-[#EAE3F1] p-8 shadow-sm overflow-hidden group">
               
               {/* Subtle Decorative Gradient */}
-              <div className="absolute top-0 right-0 w-48 h-48 bg-[#D8C2F0]/30 rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute top-0 right-0 w-48 h-48 bg-[#D8C2F0]/30 rounded-full blur-3xl pointer-events-none group-hover:scale-125 transition-transform duration-700" />
 
-              {/* Animated Brand Monogram */}
-              <div className="relative w-36 h-36 mx-auto my-6 flex items-center justify-center">
-                <div className="absolute inset-0 rounded-3xl bg-[#5A2D91]/10 blur-xl" />
-                <svg className="w-full h-full relative z-10" viewBox="0 0 100 100" fill="none">
-                  <rect x="6" y="6" width="88" height="88" rx="26" fill="white" stroke="#5A2D91" strokeWidth="2.5" />
-                  <path
-                    d="M 64 34 C 58 26 44 25 36 33 C 25 43 25 61 36 71 C 46 80 62 76 68 67 C 71 63 71 54 71 52 L 48 52 L 48 44 L 79 44 C 79 56 78 69 70 77 C 60 88 40 89 28 78 C 14 65 14 41 28 27 C 41 15 62 16 73 27 Z"
-                    fill="url(#aboutBrightLogoGrad)"
+              {/* Official Sharp AR Monogram Tile with Subtle Float */}
+              <div className="relative w-40 h-40 mx-auto my-6 flex items-center justify-center">
+                <div className="absolute inset-0 rounded-3xl bg-[#5A2D91]/10 blur-xl group-hover:bg-[#5A2D91]/20 transition-colors" />
+                <div className="relative z-10 w-32 h-32 rounded-3xl bg-white p-5 border border-[#EAE3F1] shadow-[0_8px_25px_rgba(90,45,145,0.08)] flex items-center justify-center transform group-hover:scale-105 group-hover:rotate-1 transition-all duration-500">
+                  <img
+                    src="/logo-monogram.svg"
+                    alt="Graphix Monogram"
+                    className="w-full h-full object-contain filter drop-shadow-sm"
                   />
-                  <circle cx="50" cy="50" r="5" fill="#5A2D91" />
-                  <defs>
-                    <linearGradient id="aboutBrightLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#8E63CB" />
-                      <stop offset="100%" stopColor="#5A2D91" />
-                    </linearGradient>
-                  </defs>
-                </svg>
+                </div>
+              </div>
+
+              {/* Tagline Pill */}
+              <div className="text-center mb-4">
+                <span className="text-[10px] font-mono font-bold tracking-[0.25em] text-[#5A2D91] uppercase">
+                  CREATE VISIBILITY • BUILD IDENTITY
+                </span>
               </div>
 
               {/* Verified Location Card */}
-              <div className="rounded-2xl bg-white border border-[#EAE3F1] p-4 text-center mt-6 shadow-sm">
+              <div className="rounded-2xl bg-white border border-[#EAE3F1] p-4 text-center shadow-sm">
                 <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-[#5A2D91] mb-1">
                   <MapPin className="w-3.5 h-3.5 text-[#5A2D91]" />
                   <span>Verified Studio Location</span>
@@ -103,8 +243,8 @@ export default function About({ onOpenEnquiry }) {
             </div>
           </div>
 
-          {/* Right Brand Pillars Content */}
-          <div className="lg:col-span-7 space-y-6">
+          {/* Right Brand Pillars Content - Slide From Right */}
+          <div ref={rightContentRef} className="lg:col-span-7 space-y-6 will-change-transform">
             <h3 className="text-2xl sm:text-3xl font-black text-[#35204F]">
               Why Having Design & Print Under One Roof Matters
             </h3>
@@ -119,19 +259,19 @@ export default function About({ onOpenEnquiry }) {
 
             {/* Quick Badges on White Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-4">
-              <div className="flex items-center gap-2.5 p-3.5 rounded-xl bg-[#FAF9FC] border border-[#EAE3F1]">
+              <div className="flex items-center gap-2.5 p-3.5 rounded-xl bg-[#FAF9FC] border border-[#EAE3F1] hover:border-[#D8C2F0] hover:bg-white transition-all">
                 <CheckCircle2 className="w-4 h-4 text-[#5A2D91] shrink-0" />
                 <span className="text-xs font-bold text-[#35204F]">No Color Surprises</span>
               </div>
-              <div className="flex items-center gap-2.5 p-3.5 rounded-xl bg-[#FAF9FC] border border-[#EAE3F1]">
+              <div className="flex items-center gap-2.5 p-3.5 rounded-xl bg-[#FAF9FC] border border-[#EAE3F1] hover:border-[#D8C2F0] hover:bg-white transition-all">
                 <CheckCircle2 className="w-4 h-4 text-[#5A2D91] shrink-0" />
                 <span className="text-xs font-bold text-[#35204F]">Zero Third-Party Vendor Delays</span>
               </div>
-              <div className="flex items-center gap-2.5 p-3.5 rounded-xl bg-[#FAF9FC] border border-[#EAE3F1]">
+              <div className="flex items-center gap-2.5 p-3.5 rounded-xl bg-[#FAF9FC] border border-[#EAE3F1] hover:border-[#D8C2F0] hover:bg-white transition-all">
                 <CheckCircle2 className="w-4 h-4 text-[#5A2D91] shrink-0" />
                 <span className="text-xs font-bold text-[#35204F]">Authentic High-GSM Papers</span>
               </div>
-              <div className="flex items-center gap-2.5 p-3.5 rounded-xl bg-[#FAF9FC] border border-[#EAE3F1]">
+              <div className="flex items-center gap-2.5 p-3.5 rounded-xl bg-[#FAF9FC] border border-[#EAE3F1] hover:border-[#D8C2F0] hover:bg-white transition-all">
                 <CheckCircle2 className="w-4 h-4 text-[#5A2D91] shrink-0" />
                 <span className="text-xs font-bold text-[#35204F]">Express Local Turnaround</span>
               </div>
@@ -143,7 +283,7 @@ export default function About({ onOpenEnquiry }) {
                   soundManager.playClick();
                   if (onOpenEnquiry) onOpenEnquiry();
                 }}
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full text-xs font-bold text-white bg-gradient-to-r from-[#5A2D91] to-[#8E63CB] shadow-sm hover:shadow-[0_4px_16px_rgba(90,45,145,0.25)] transition-all"
+                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full text-xs font-bold text-white bg-gradient-to-r from-[#5A2D91] to-[#8E63CB] shadow-sm hover:shadow-[0_4px_16px_rgba(90,45,145,0.25)] hover:scale-105 active:scale-95 transition-all"
               >
                 <span>Discuss Your Project With Us</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -154,7 +294,7 @@ export default function About({ onOpenEnquiry }) {
         </div>
 
         {/* 4-Step Production Journey */}
-        <div className="pt-12 border-t border-[#EAE3F1]">
+        <div ref={workflowRef} className="pt-12 border-t border-[#EAE3F1]">
           <div className="text-center max-w-xl mx-auto mb-12">
             <span className="text-xs font-mono font-bold tracking-widest text-[#5A2D91] uppercase block mb-2">
               METHODICAL EXECUTION
@@ -165,21 +305,24 @@ export default function About({ onOpenEnquiry }) {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {steps.map((st) => (
+            {steps.map((st, idx) => (
               <div
                 key={st.num}
-                className="rounded-2xl bg-[#FAF9FC] border border-[#EAE3F1] p-6 flex flex-col justify-between hover:border-[#D8C2F0] hover:bg-white hover:shadow-sm transition-all duration-300 hover:-translate-y-1"
+                ref={(el) => (stepCardsRef.current[idx] = el)}
+                className="rounded-2xl bg-[#FAF9FC] border border-[#EAE3F1] p-6 flex flex-col justify-between hover:border-[#D8C2F0] hover:bg-white hover:shadow-md transition-all duration-300 hover:-translate-y-1.5 will-change-transform group cursor-default"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <span className="text-2xl font-black text-[#5A2D91]">
+                    <span className="text-2xl font-black text-[#5A2D91] group-hover:scale-110 transition-transform inline-block">
                       {st.num}
                     </span>
-                    <span className="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-white text-[#5A2D91] border border-[#EAE3F1]">
+                    <span className="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-white text-[#5A2D91] border border-[#EAE3F1] group-hover:border-[#D8C2F0]">
                       {st.tag}
                     </span>
                   </div>
-                  <h4 className="text-base font-bold text-[#35204F] mb-2">{st.title}</h4>
+                  <h4 className="text-base font-bold text-[#35204F] mb-2 group-hover:text-[#5A2D91] transition-colors">
+                    {st.title}
+                  </h4>
                   <p className="text-xs text-[#625B69] leading-relaxed">{st.desc}</p>
                 </div>
               </div>

@@ -1,6 +1,10 @@
-import React, { useState } from 'react';
-import { Calculator, MessageSquare } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Calculator, MessageSquare, Sparkles } from 'lucide-react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { soundManager } from '../utils/sound';
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function PriceEstimator({ onEnquireWithEstimate }) {
   const [selectedService, setSelectedService] = useState('flex');
@@ -21,6 +25,13 @@ export default function PriceEstimator({ onEnquireWithEstimate }) {
   // LED Board state
   const [ledLength, setLedLength] = useState(8);
   const [ledStyle, setLedStyle] = useState('acrylic-3d'); // acrylic-3d, halo, neon
+
+  const sectionRef = useRef(null);
+  const calcCardRef = useRef(null);
+  const headerRef = useRef(null);
+  const minPriceRef = useRef(null);
+  const maxPriceRef = useRef(null);
+  const prevPriceObj = useRef({ min: 1000, max: 2000 });
 
   const calculateEstimate = () => {
     switch (selectedService) {
@@ -88,6 +99,77 @@ export default function PriceEstimator({ onEnquireWithEstimate }) {
 
   const estimate = calculateEstimate();
 
+  // Scroll entrance animation
+  useEffect(() => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
+    const ctx = gsap.context(() => {
+      // Header entrance
+      if (headerRef.current) {
+        gsap.fromTo(
+          headerRef.current,
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: headerRef.current,
+              start: 'top 85%',
+              toggleActions: 'play none none none'
+            }
+          }
+        );
+      }
+
+      // Zoom-In reveal on the calculator container card
+      if (calcCardRef.current) {
+        gsap.fromTo(
+          calcCardRef.current,
+          { opacity: 0, scale: 0.93, y: 35 },
+          {
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            duration: 0.9,
+            ease: 'expo.out',
+            scrollTrigger: {
+              trigger: calcCardRef.current,
+              start: 'top 85%',
+              toggleActions: 'play none none none'
+            }
+          }
+        );
+      }
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  // Kinetic Animated Price Counter
+  useEffect(() => {
+    const currentPrices = { min: prevPriceObj.current.min, max: prevPriceObj.current.max };
+    
+    gsap.to(currentPrices, {
+      min: estimate.min,
+      max: estimate.max,
+      duration: 0.45,
+      ease: 'power2.out',
+      onUpdate: () => {
+        if (minPriceRef.current) {
+          minPriceRef.current.textContent = `₹${Math.round(currentPrices.min).toLocaleString('en-IN')}`;
+        }
+        if (maxPriceRef.current) {
+          maxPriceRef.current.textContent = `₹${Math.round(currentPrices.max).toLocaleString('en-IN')}`;
+        }
+      }
+    });
+
+    prevPriceObj.current = { min: estimate.min, max: estimate.max };
+  }, [estimate.min, estimate.max]);
+
   const handleSendToWhatsApp = () => {
     soundManager.playClick();
     const message = `Hello GRAPHIX, I generated a quote on your website for *${estimate.title}*:%0A- Specifications: ${estimate.details}%0A- Estimated Range: ₹${estimate.min} - ₹${estimate.max}%0APlease confirm availability and final timeline.`;
@@ -95,11 +177,11 @@ export default function PriceEstimator({ onEnquireWithEstimate }) {
   };
 
   return (
-    <section id="estimator" className="relative py-24 bg-[#FAF9FC] border-y border-[#EAE3F1]">
+    <section ref={sectionRef} id="estimator" className="relative py-24 bg-[#FAF9FC] border-y border-[#EAE3F1]">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
 
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-12">
+        <div ref={headerRef} className="text-center max-w-2xl mx-auto mb-12">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#EAE3F1] text-[#5A2D91] text-xs uppercase tracking-widest font-bold mb-3 shadow-sm">
             <Calculator className="w-3.5 h-3.5 text-[#8E63CB]" />
             <span>Instant Print Quote Calculator</span>
@@ -112,9 +194,11 @@ export default function PriceEstimator({ onEnquireWithEstimate }) {
           </p>
         </div>
 
-        {/* Calculator Card - Bright Luxury White */}
-        <div className="rounded-3xl bg-white border border-[#EAE3F1] p-6 sm:p-10 shadow-[0_8px_30px_rgba(53,32,79,0.06)]">
-          
+        {/* Calculator Card - Bright Luxury White with Scale Up Reveal */}
+        <div
+          ref={calcCardRef}
+          className="rounded-3xl bg-white border border-[#EAE3F1] p-6 sm:p-10 shadow-[0_8px_30px_rgba(53,32,79,0.06)] will-change-transform"
+        >
           {/* Service Selector Tabs */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-8">
             {[
@@ -263,12 +347,12 @@ export default function PriceEstimator({ onEnquireWithEstimate }) {
                 <>
                   <div>
                     <div className="flex justify-between text-xs font-bold text-[#35204F] mb-2">
-                      <span>Area: {vinylArea} Square Feet</span>
+                      <span>Total Area: {vinylArea} Sq.Ft</span>
                     </div>
                     <input
                       type="range"
                       min="5"
-                      max="100"
+                      max="150"
                       value={vinylArea}
                       onChange={(e) => setVinylArea(Number(e.target.value))}
                       className="w-full accent-[#5A2D91]"
@@ -349,11 +433,17 @@ export default function PriceEstimator({ onEnquireWithEstimate }) {
             </div>
 
             {/* Right Result Estimation Box - Light Lavender Architectural Card */}
-            <div className="rounded-2xl bg-[#F3ECFA]/60 border border-[#D8C2F0] p-6 sm:p-8 flex flex-col justify-between shadow-sm relative overflow-hidden">
+            <div className="rounded-2xl bg-[#F3ECFA]/60 border border-[#D8C2F0] p-6 sm:p-8 flex flex-col justify-between shadow-sm relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-[#8E63CB]/10 rounded-full blur-2xl pointer-events-none" />
+
               <div>
-                <span className="text-[10px] font-mono font-bold tracking-widest text-[#5A2D91] uppercase block mb-1">
-                  CALCULATED ESTIMATION
-                </span>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[10px] font-mono font-bold tracking-widest text-[#5A2D91] uppercase">
+                    CALCULATED ESTIMATION
+                  </span>
+                  <Sparkles className="w-3.5 h-3.5 text-[#8E63CB]" />
+                </div>
+
                 <h3 className="text-xl font-black text-[#35204F] mb-1.5">
                   {estimate.title}
                 </h3>
@@ -361,12 +451,15 @@ export default function PriceEstimator({ onEnquireWithEstimate }) {
                   {estimate.details}
                 </p>
 
-                {/* Price Display */}
+                {/* Animated Rolling Price Display */}
                 <div className="mb-2">
-                  <div className="text-3xl sm:text-4xl font-black text-[#5A2D91]">
-                    ₹{estimate.min.toLocaleString('en-IN')} – ₹{estimate.max.toLocaleString('en-IN')}*
+                  <div className="text-3xl sm:text-4xl font-black text-[#5A2D91] flex items-center gap-1.5 font-mono tracking-tight">
+                    <span ref={minPriceRef}>₹{estimate.min.toLocaleString('en-IN')}</span>
+                    <span className="text-[#8E63CB] font-sans font-light">–</span>
+                    <span ref={maxPriceRef}>₹{estimate.max.toLocaleString('en-IN')}</span>
+                    <span className="text-base text-[#8E63CB] font-normal">*</span>
                   </div>
-                  <span className="text-[10px] text-[#8A7E99] block mt-1">
+                  <span className="text-[10px] text-[#8A7E99] block mt-1.5">
                     *Taxes & custom installation evaluated per project specifics.
                   </span>
                 </div>

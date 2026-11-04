@@ -1,18 +1,170 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Eye, Sparkles, X, Check, ArrowRight, Palette, ChevronLeft, ChevronRight, SlidersHorizontal, LayoutGrid } from 'lucide-react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import SplitType from 'split-type';
 import { portfolioCategories, portfolioItems } from '../data/portfolioData';
 import ServiceMockup3D from './ServiceMockup3D';
 import { soundManager } from '../utils/sound';
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function Portfolio({ onRequestSimilar }) {
   const [activeCategory, setActiveCategory] = useState('All');
   const [selectedProject, setSelectedProject] = useState(null);
   const [viewMode, setViewMode] = useState('slider'); // 'slider' | 'grid'
+  
+  const sectionRef = useRef(null);
   const sliderRef = useRef(null);
+  const headingSolidRef = useRef(null);
+  const headingGradientRef = useRef(null);
+  const badgeRef = useRef(null);
+  const descRef = useRef(null);
+  const toolbarRef = useRef(null);
+  const cardsContainerRef = useRef(null);
 
   const filteredItems = portfolioItems.filter((item) =>
     activeCategory === 'All' ? true : item.category === activeCategory
   );
+
+  useEffect(() => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
+    let splitHeading = null;
+
+    const ctx = gsap.context(() => {
+      // 1. Badge pop-in
+      if (badgeRef.current) {
+        gsap.fromTo(
+          badgeRef.current,
+          { opacity: 0, scale: 0.88, y: 15 },
+          {
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            duration: 0.7,
+            ease: 'expo.out',
+            scrollTrigger: {
+              trigger: badgeRef.current,
+              start: 'top 85%',
+              toggleActions: 'play none none none'
+            }
+          }
+        );
+      }
+
+      // 2. Heading Solid SplitType Line/Word Reveal
+      if (headingSolidRef.current) {
+        splitHeading = new SplitType(headingSolidRef.current, { types: 'lines,words' });
+        if (splitHeading.words && splitHeading.words.length > 0) {
+          gsap.fromTo(
+            splitHeading.words,
+            { opacity: 0, y: 35, filter: 'blur(4px)' },
+            {
+              opacity: 1,
+              y: 0,
+              filter: 'blur(0px)',
+              duration: 0.85,
+              stagger: 0.035,
+              ease: 'power3.out',
+              scrollTrigger: {
+                trigger: headingSolidRef.current,
+                start: 'top 88%',
+                toggleActions: 'play none none none'
+              }
+            }
+          );
+        }
+      }
+
+      // 2b. Heading Gradient Masked Slide Up
+      if (headingGradientRef.current) {
+        gsap.fromTo(
+          headingGradientRef.current,
+          { opacity: 0, y: '100%' },
+          {
+            opacity: 1,
+            y: '0%',
+            duration: 0.9,
+            ease: 'expo.out',
+            scrollTrigger: {
+              trigger: headingSolidRef.current || headingGradientRef.current,
+              start: 'top 88%',
+              toggleActions: 'play none none none'
+            }
+          }
+        );
+      }
+
+      // 3. Section Description fade up
+      if (descRef.current) {
+        gsap.fromTo(
+          descRef.current,
+          { opacity: 0, y: 20 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: descRef.current,
+              start: 'top 88%',
+              toggleActions: 'play none none none'
+            }
+          }
+        );
+      }
+
+      // 4. Toolbar fade up
+      if (toolbarRef.current) {
+        gsap.fromTo(
+          toolbarRef.current,
+          { opacity: 0, y: 20 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.7,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: toolbarRef.current,
+              start: 'top 88%',
+              toggleActions: 'play none none none'
+            }
+          }
+        );
+      }
+
+      // 5. Staggered Portfolio Cards entrance
+      if (cardsContainerRef.current) {
+        const cards = cardsContainerRef.current.querySelectorAll('.portfolio-card-item');
+        if (cards.length > 0) {
+          gsap.fromTo(
+            cards,
+            { opacity: 0, y: 45, scale: 0.96 },
+            {
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              duration: 0.85,
+              stagger: 0.08,
+              ease: 'power3.out',
+              scrollTrigger: {
+                trigger: cardsContainerRef.current,
+                start: 'top 85%',
+                toggleActions: 'play none none none'
+              }
+            }
+          );
+        }
+      }
+    }, sectionRef);
+
+    return () => {
+      if (splitHeading) splitHeading.revert();
+      ctx.revert();
+    };
+  }, [viewMode, activeCategory]);
 
   const slideLeft = () => {
     soundManager.playClick();
@@ -30,34 +182,62 @@ export default function Portfolio({ onRequestSimilar }) {
     }
   };
 
+  // 3D Card Tilt Handler
+  const handleCardMouseMove = (e) => {
+    if (window.innerWidth < 768) return;
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateX = ((y - centerY) / centerY) * -5;
+    const rotateY = ((x - centerX) / centerX) * 5;
+    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-6px)`;
+  };
+
+  const handleCardMouseLeave = (e) => {
+    const card = e.currentTarget;
+    card.style.transform = '';
+  };
+
   return (
-    <section id="work" className="relative py-28 bg-[#FAF9FC] border-t border-[#EAE3F1] overflow-hidden">
+    <section ref={sectionRef} id="work" className="relative py-28 bg-[#FAF9FC] border-t border-[#EAE3F1] overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
           <div>
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#EAE3F1] text-[#5A2D91] text-xs uppercase tracking-[0.2em] font-bold mb-4 shadow-sm">
+            <div
+              ref={badgeRef}
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#EAE3F1] text-[#5A2D91] text-xs uppercase tracking-[0.2em] font-bold mb-4 shadow-sm"
+            >
               <Sparkles className="w-3.5 h-3.5 text-[#8E63CB]" />
               <span>Curated Design Archive</span>
             </div>
 
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-[#35204F] tracking-tight">
-              FEATURED WORK &{' '}
-              <br className="hidden sm:inline" />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#35204F] via-[#5A2D91] to-[#8E63CB]">
-                PRODUCTION REPERTOIRE
+              <span ref={headingSolidRef} className="block">
+                FEATURED WORK &
               </span>
+              <div className="overflow-hidden">
+                <span
+                  ref={headingGradientRef}
+                  className="block text-transparent bg-clip-text bg-gradient-to-r from-[#35204F] via-[#5A2D91] to-[#8E63CB]"
+                >
+                  PRODUCTION REPERTOIRE
+                </span>
+              </div>
             </h2>
           </div>
 
-          <p className="text-xs sm:text-sm text-[#625B69] max-w-md leading-relaxed">
+          <p ref={descRef} className="text-xs sm:text-sm text-[#625B69] max-w-md leading-relaxed">
             A showcase of recent graphic concepts, precision signage, and high-GSM print executions created for businesses and events across Tirunelveli district.
           </p>
         </div>
 
         {/* Toolbar: Categories + View Switcher & Slide Arrows */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <div ref={toolbarRef} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           {/* Categories Bar */}
           <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
             {portfolioCategories.map((cat) => (
@@ -139,18 +319,23 @@ export default function Portfolio({ onRequestSimilar }) {
         {/* 1. CARDS SLIDES VIEW */}
         {viewMode === 'slider' && (
           <div
-            ref={sliderRef}
+            ref={(el) => {
+              sliderRef.current = el;
+              cardsContainerRef.current = el;
+            }}
             className="flex items-stretch gap-6 overflow-x-auto pb-6 pt-2 snap-x snap-mandatory scroll-smooth no-scrollbar"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
             {filteredItems.map((item) => (
               <div
                 key={item.id}
+                onMouseMove={handleCardMouseMove}
+                onMouseLeave={handleCardMouseLeave}
                 onClick={() => {
                   soundManager.playClick();
                   setSelectedProject(item);
                 }}
-                className="w-[85vw] sm:w-[380px] lg:w-[410px] shrink-0 snap-center group cursor-pointer rounded-2xl bg-white border border-[#EAE3F1] hover:border-[#D8C2F0] p-5 flex flex-col justify-between transition-all duration-500 hover:-translate-y-2 shadow-[0_4px_20px_rgba(53,32,79,0.04)] hover:shadow-[0_20px_40px_rgba(90,45,145,0.14)]"
+                className="portfolio-card-item w-[85vw] sm:w-[380px] lg:w-[410px] shrink-0 snap-center group cursor-pointer rounded-2xl bg-white border border-[#EAE3F1] hover:border-[#D8C2F0] p-5 flex flex-col justify-between transition-all duration-300 shadow-[0_4px_20px_rgba(53,32,79,0.04)] hover:shadow-[0_20px_40px_rgba(90,45,145,0.14)] will-change-transform"
               >
                 <div>
                   <div className="relative rounded-xl overflow-hidden mb-5">
@@ -199,15 +384,17 @@ export default function Portfolio({ onRequestSimilar }) {
 
         {/* 2. MASONRY GRID VIEW */}
         {viewMode === 'grid' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          <div ref={cardsContainerRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {filteredItems.map((item, index) => (
               <div
                 key={item.id}
+                onMouseMove={handleCardMouseMove}
+                onMouseLeave={handleCardMouseLeave}
                 onClick={() => {
                   soundManager.playClick();
                   setSelectedProject(item);
                 }}
-                className={`group cursor-pointer rounded-2xl bg-white border border-[#EAE3F1] hover:border-[#D8C2F0] p-5 flex flex-col justify-between transition-all duration-500 hover:-translate-y-1.5 shadow-[0_4px_20px_rgba(53,32,79,0.04)] hover:shadow-[0_16px_36px_rgba(90,45,145,0.12)] ${
+                className={`portfolio-card-item group cursor-pointer rounded-2xl bg-white border border-[#EAE3F1] hover:border-[#D8C2F0] p-5 flex flex-col justify-between transition-all duration-300 shadow-[0_4px_20px_rgba(53,32,79,0.04)] hover:shadow-[0_16px_36px_rgba(90,45,145,0.12)] will-change-transform ${
                   index === 0 ? 'md:col-span-2 lg:col-span-2' : ''
                 }`}
               >
@@ -259,12 +446,11 @@ export default function Portfolio({ onRequestSimilar }) {
 
       </div>
 
-      {/* Full-Screen Project Lightbox - Clean White Surface */}
+      {/* Inspect Project Modal */}
       {selectedProject && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in">
-          <div className="relative w-full max-w-2xl rounded-2xl bg-white border border-[#EAE3F1] p-6 sm:p-8 shadow-[0_25px_70px_rgba(53,32,79,0.18)] max-h-[92vh] overflow-y-auto">
+          <div className="relative w-full max-w-xl rounded-2xl bg-white border border-[#EAE3F1] p-6 sm:p-8 shadow-[0_25px_60px_rgba(53,32,79,0.18)] max-h-[90vh] overflow-y-auto">
             
-            {/* Close Button */}
             <button
               onClick={() => setSelectedProject(null)}
               className="absolute top-5 right-5 p-2 rounded-full bg-[#FAF9FC] hover:bg-[#F3ECFA] text-[#35204F] border border-[#EAE3F1] transition-colors"

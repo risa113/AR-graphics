@@ -46,10 +46,17 @@ export default function Header({ onOpenEnquiry }) {
     setSoundEnabled(newState);
   };
 
-  const handleLinkClick = (id) => {
+  const handleLinkClick = (e, id) => {
+    if (e) e.preventDefault();
     soundManager.playClick();
     setActiveSection(id);
     setMobileMenuOpen(false);
+    if (window.__lenis) {
+      window.__lenis.scrollTo(`#${id}`);
+    } else {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   return (
@@ -66,7 +73,7 @@ export default function Header({ onOpenEnquiry }) {
           {/* Logo with Polished AR Monogram */}
           <a
             href="#home"
-            onClick={() => handleLinkClick('home')}
+            onClick={(e) => handleLinkClick(e, 'home')}
             onMouseEnter={() => soundManager.playHover()}
             className="group flex items-center gap-2.5 sm:gap-3.5 focus:outline-none shrink-0"
           >
@@ -99,7 +106,7 @@ export default function Header({ onOpenEnquiry }) {
                 <a
                   key={link.id}
                   href={link.href}
-                  onClick={() => handleLinkClick(link.id)}
+                  onClick={(e) => handleLinkClick(e, link.id)}
                   onMouseEnter={() => soundManager.playHover()}
                   className={`relative px-4 py-1.5 text-xs font-semibold tracking-wide rounded-full transition-all duration-300 ${
                     isActive
@@ -182,7 +189,7 @@ export default function Header({ onOpenEnquiry }) {
               <a
                 key={link.id}
                 href={link.href}
-                onClick={() => handleLinkClick(link.id)}
+                onClick={(e) => handleLinkClick(e, link.id)}
                 className={`px-4 py-2.5 rounded-xl text-sm font-semibold transition-all ${
                   activeSection === link.id
                     ? 'bg-[#5A2D91] text-white shadow-sm'

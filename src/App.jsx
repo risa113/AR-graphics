@@ -1,4 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import Lenis from 'lenis';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Preloader from './components/Preloader';
 import CustomCursor from './components/CustomCursor';
 import Header from './components/Header';
@@ -15,11 +18,62 @@ import EnquiryModal from './components/EnquiryModal';
 import { MessageSquare } from 'lucide-react';
 import { soundManager } from './utils/sound';
 
+gsap.registerPlugin(ScrollTrigger);
+
 export default function App() {
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [activeEnquiryService, setActiveEnquiryService] = useState(null);
   const [prefilledMessage, setPrefilledMessage] = useState('');
+
+  useEffect(() => {
+    window.__dismissPreloader = () => setLoading(false);
+  }, []);
+
+  // Lenis Smooth Scrolling + GSAP ScrollTrigger Global Sync
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.15,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      direction: 'vertical',
+      gestureDirection: 'vertical',
+      smooth: true,
+      smoothTouch: false,
+      touchMultiplier: 1.8,
+    });
+
+    window.__lenis = lenis;
+    lenis.on('scroll', ScrollTrigger.update);
+
+    const updateTicker = (time) => {
+      lenis.raf(time * 1000);
+    };
+
+    gsap.ticker.add(updateTicker);
+    gsap.ticker.lagSmoothing(0);
+
+    // Global Top Reading Progress Bar
+    const progressBar = document.getElementById('scroll-progress-bar');
+    if (progressBar) {
+      gsap.to(progressBar, {
+        scaleX: 1,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: document.body,
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: 0.15,
+        },
+      });
+    }
+
+    return () => {
+      gsap.ticker.remove(updateTicker);
+      lenis.destroy();
+      window.__lenis = null;
+      ScrollTrigger.getAll().forEach((t) => t.kill());
+    };
+  }, []);
 
   const handleSelectService = (service) => {
     soundManager.playClick();
@@ -43,6 +97,12 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-white text-[#35204F] selection:bg-[#D8C2F0] selection:text-[#35204F] relative w-full max-w-[100vw] overflow-x-hidden overflow-x-clip">
+      
+      {/* 0. Top Reading Progress Indicator (Lenis + GSAP) */}
+      <div
+        id="scroll-progress-bar"
+        className="fixed top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-[#5A2D91] via-[#8E63CB] to-[#D8C2F0] z-[70] origin-left scale-x-0 will-change-transform pointer-events-none"
+      />
       
       {/* 1. Animated Preloader (Bright Studio Theme) */}
       {loading && <Preloader onComplete={() => setLoading(false)} />}

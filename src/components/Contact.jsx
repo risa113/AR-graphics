@@ -1,8 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Phone, MessageSquare, MapPin, Send, Clock, CheckCircle2, AlertCircle, Sparkles } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import SplitType from 'split-type';
 import { servicesData } from '../data/servicesData';
 import { soundManager } from '../utils/sound';
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function Contact({ prefilledService, prefilledMessage }) {
   const [formData, setFormData] = useState({
@@ -17,6 +22,14 @@ export default function Contact({ prefilledService, prefilledMessage }) {
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
   const [submittedTicket, setSubmittedTicket] = useState(null);
+
+  const sectionRef = useRef(null);
+  const headingSolidRef = useRef(null);
+  const headingGradientRef = useRef(null);
+  const badgeRef = useRef(null);
+  const descRef = useRef(null);
+  const formCardRef = useRef(null);
+  const infoCardRef = useRef(null);
 
   useEffect(() => {
     if (prefilledService) {
@@ -36,6 +49,143 @@ export default function Contact({ prefilledService, prefilledMessage }) {
       }));
     }
   }, [prefilledMessage]);
+
+  useEffect(() => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
+    let splitHeading = null;
+
+    const ctx = gsap.context(() => {
+      const isMobile = window.innerWidth < 768;
+      const xDistance = isMobile ? 25 : 45;
+
+      // 1. Badge pop-in
+      if (badgeRef.current) {
+        gsap.fromTo(
+          badgeRef.current,
+          { opacity: 0, scale: 0.88, y: 15 },
+          {
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            duration: 0.7,
+            ease: 'expo.out',
+            scrollTrigger: {
+              trigger: badgeRef.current,
+              start: 'top 85%',
+              toggleActions: 'play none none none'
+            }
+          }
+        );
+      }
+
+      // 2. Solid SplitType Heading Reveal
+      if (headingSolidRef.current) {
+        splitHeading = new SplitType(headingSolidRef.current, { types: 'lines,words' });
+        if (splitHeading.words && splitHeading.words.length > 0) {
+          gsap.fromTo(
+            splitHeading.words,
+            { opacity: 0, y: 35, filter: 'blur(4px)' },
+            {
+              opacity: 1,
+              y: 0,
+              filter: 'blur(0px)',
+              duration: 0.85,
+              stagger: 0.035,
+              ease: 'power3.out',
+              scrollTrigger: {
+                trigger: headingSolidRef.current,
+                start: 'top 88%',
+                toggleActions: 'play none none none'
+              }
+            }
+          );
+        }
+      }
+
+      // 2b. Gradient Masked Slide Up
+      if (headingGradientRef.current) {
+        gsap.fromTo(
+          headingGradientRef.current,
+          { opacity: 0, y: '100%' },
+          {
+            opacity: 1,
+            y: '0%',
+            duration: 0.9,
+            ease: 'expo.out',
+            scrollTrigger: {
+              trigger: headingSolidRef.current || headingGradientRef.current,
+              start: 'top 88%',
+              toggleActions: 'play none none none'
+            }
+          }
+        );
+      }
+
+      // 3. Subtitle fade up
+      if (descRef.current) {
+        gsap.fromTo(
+          descRef.current,
+          { opacity: 0, y: 20 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: descRef.current,
+              start: 'top 88%',
+              toggleActions: 'play none none none'
+            }
+          }
+        );
+      }
+
+      // 4. Form Column Slide From Left
+      if (formCardRef.current) {
+        gsap.fromTo(
+          formCardRef.current,
+          { opacity: 0, x: -xDistance },
+          {
+            opacity: 1,
+            x: 0,
+            duration: 0.9,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: formCardRef.current,
+              start: 'top 82%',
+              toggleActions: 'play none none none'
+            }
+          }
+        );
+      }
+
+      // 5. Info Column Slide From Right
+      if (infoCardRef.current) {
+        gsap.fromTo(
+          infoCardRef.current,
+          { opacity: 0, x: xDistance },
+          {
+            opacity: 1,
+            x: 0,
+            duration: 0.9,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: infoCardRef.current,
+              start: 'top 82%',
+              toggleActions: 'play none none none'
+            }
+          }
+        );
+      }
+    }, sectionRef);
+
+    return () => {
+      if (splitHeading) splitHeading.revert();
+      ctx.revert();
+    };
+  }, []);
 
   const validate = () => {
     const errs = {};
@@ -112,25 +262,34 @@ export default function Contact({ prefilledService, prefilledMessage }) {
   };
 
   return (
-    <section id="contact" className="relative py-28 bg-[#FAF9FC] border-t border-[#EAE3F1] overflow-hidden">
+    <section ref={sectionRef} id="contact" className="relative py-28 bg-[#FAF9FC] border-t border-[#EAE3F1] overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#EAE3F1] text-[#5A2D91] text-xs uppercase tracking-[0.2em] font-bold mb-4 shadow-sm">
+          <div
+            ref={badgeRef}
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#EAE3F1] text-[#5A2D91] text-xs uppercase tracking-[0.2em] font-bold mb-4 shadow-sm"
+          >
             <Sparkles className="w-3.5 h-3.5 text-[#8E63CB]" />
             <span>Connect Directly With Our Studio</span>
           </div>
 
           <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-[#35204F] tracking-tight mb-4">
-            START YOUR PROJECT.{' '}
-            <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#35204F] via-[#5A2D91] to-[#8E63CB]">
-              TALK TO GRAPHIX.
+            <span ref={headingSolidRef} className="block">
+              START YOUR PROJECT.
             </span>
+            <div className="overflow-hidden">
+              <span
+                ref={headingGradientRef}
+                className="block text-transparent bg-clip-text bg-gradient-to-r from-[#35204F] via-[#5A2D91] to-[#8E63CB]"
+              >
+                TALK TO GRAPHIX.
+              </span>
+            </div>
           </h2>
 
-          <p className="text-sm sm:text-base text-[#625B69]">
+          <p ref={descRef} className="text-sm sm:text-base text-[#625B69]">
             Have a question, urgent event deadline, or custom design idea? Send us an inquiry or reach us immediately via phone and WhatsApp.
           </p>
         </div>
@@ -138,8 +297,8 @@ export default function Contact({ prefilledService, prefilledMessage }) {
         {/* Contact Layout: Form (Left) & Verified Business Details (Right) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           
-          {/* Left Column: Real Interactive Enquiry Form */}
-          <div className="lg:col-span-7">
+          {/* Left Column: Real Interactive Enquiry Form - Slide From Left */}
+          <div ref={formCardRef} className="lg:col-span-7 will-change-transform">
             <div className="rounded-3xl bg-white border border-[#EAE3F1] p-6 sm:p-10 shadow-[0_8px_30px_rgba(53,32,79,0.06)]">
               
               {submittedTicket ? (
@@ -252,31 +411,29 @@ export default function Contact({ prefilledService, prefilledMessage }) {
                       <select
                         value={formData.service}
                         onChange={(e) => setFormData({ ...formData, service: e.target.value })}
-                        className="w-full px-4 py-3 rounded-xl bg-[#FAF9FC] border border-[#EAE3F1] text-sm text-[#35204F] focus:outline-none focus:border-[#5A2D91] focus:bg-white transition-colors"
+                        className="w-full px-4 py-3 rounded-xl bg-[#FAF9FC] border border-[#EAE3F1] text-sm text-[#35204F] focus:outline-none focus:border-[#5A2D91] focus:bg-white transition-colors cursor-pointer"
                       >
                         {servicesData.map((s) => (
-                          <option key={s.id} value={s.id} className="bg-white text-[#35204F]">
-                            {s.number}. {s.title}
+                          <option key={s.id} value={s.id}>
+                            {s.title} ({s.badge})
                           </option>
                         ))}
-                        <option value="custom-package" className="bg-white text-[#35204F]">
-                          Custom Branding / Complete Package
-                        </option>
                       </select>
                     </div>
 
-                    {/* Quantity or Dimensions */}
+                    {/* Estimated Quantity / Size */}
                     <div>
                       <label className="text-xs font-bold text-[#35204F] block mb-1.5">
-                        Estimated Size or Quantity (Optional)
+                        Approximate Quantity / Dimensions
                       </label>
                       <input
                         type="text"
-                        placeholder="e.g. 10x4 ft banner / 1000 cards"
+                        placeholder="e.g. 10x4 ft, 1000 cards, or 50 mugs"
                         value={formData.quantity}
                         onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
                         className="w-full px-4 py-3 rounded-xl bg-[#FAF9FC] border border-[#EAE3F1] text-sm text-[#35204F] placeholder-gray-400 focus:outline-none focus:border-[#5A2D91] focus:bg-white transition-colors"
-                      />
+                      >
+                      </input>
                     </div>
 
                   </div>
@@ -284,11 +441,11 @@ export default function Contact({ prefilledService, prefilledMessage }) {
                   {/* Email */}
                   <div>
                     <label className="text-xs font-bold text-[#35204F] block mb-1.5">
-                      Email Address (Optional)
+                      Email Address <span className="text-[#8A7E99] font-normal">(Optional for proof approval)</span>
                     </label>
                     <input
                       type="email"
-                      placeholder="e.g. name@company.com"
+                      placeholder="e.g. yourname@domain.com"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       className={`w-full px-4 py-3 rounded-xl bg-[#FAF9FC] border text-sm text-[#35204F] placeholder-gray-400 focus:outline-none focus:border-[#5A2D91] focus:bg-white transition-colors ${
@@ -303,14 +460,14 @@ export default function Contact({ prefilledService, prefilledMessage }) {
                     )}
                   </div>
 
-                  {/* Message Field */}
+                  {/* Message */}
                   <div>
                     <label className="text-xs font-bold text-[#35204F] block mb-1.5">
-                      Project Requirements & Instructions <span className="text-red-500">*</span>
+                      Project Details & Design Brief <span className="text-red-500">*</span>
                     </label>
                     <textarea
-                      rows="4"
-                      placeholder="Describe your design vision, required deadline, or specific finishing options..."
+                      rows={4}
+                      placeholder="Describe your design, brand colors, event date, material preference, or urgent turnaround needs..."
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                       className={`w-full px-4 py-3 rounded-xl bg-[#FAF9FC] border text-sm text-[#35204F] placeholder-gray-400 focus:outline-none focus:border-[#5A2D91] focus:bg-white transition-colors resize-none ${
@@ -326,30 +483,35 @@ export default function Contact({ prefilledService, prefilledMessage }) {
                   </div>
 
                   {/* Submit Button */}
-                  <div className="pt-2">
-                    <button
-                      type="submit"
-                      disabled={submitting}
-                      className="w-full py-4 rounded-xl text-sm font-bold tracking-wide text-white bg-gradient-to-r from-[#5A2D91] to-[#8E63CB] hover:from-[#6c36ac] hover:to-[#9c71da] transition-all duration-300 shadow-[0_4px_16px_rgba(90,45,145,0.25)] hover:scale-[1.01] active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50"
-                    >
-                      {submitting ? (
-                        <span>Processing Ticket...</span>
-                      ) : (
-                        <>
-                          <Send className="w-4 h-4" />
-                          <span>Submit Design & Print Enquiry</span>
-                        </>
-                      )}
-                    </button>
-                  </div>
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className="w-full py-4 rounded-xl bg-gradient-to-r from-[#5A2D91] to-[#8E63CB] hover:from-[#6c36ac] hover:to-[#9c71da] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-[0_4px_16px_rgba(90,45,145,0.25)] hover:scale-[1.01] active:scale-95 transition-all disabled:opacity-50"
+                  >
+                    {submitting ? (
+                      <span className="flex items-center gap-2">
+                        <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        <span>Submitting to Melapalayam Production Desk...</span>
+                      </span>
+                    ) : (
+                      <>
+                        <Send className="w-4 h-4" />
+                        <span>Submit Project Enquiry & Generate Ticket</span>
+                      </>
+                    )}
+                  </button>
+
+                  <p className="text-[11px] text-center text-[#8A7E99] pt-2">
+                    Your details are treated confidentially. We respond within 15–30 minutes during studio hours.
+                  </p>
                 </form>
               )}
 
             </div>
           </div>
 
-          {/* Right Column: Verified Business Information & Map */}
-          <div className="lg:col-span-5 space-y-6">
+          {/* Right Column: Verified Business Information & Map - Slide From Right */}
+          <div ref={infoCardRef} className="lg:col-span-5 space-y-6 will-change-transform">
             
             <div className="rounded-3xl bg-white border border-[#EAE3F1] p-6 sm:p-8 space-y-5 shadow-[0_8px_30px_rgba(53,32,79,0.06)]">
               
