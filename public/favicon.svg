@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8E63CB" />
+      <stop offset="100%" stop-color="#5A2D91" />
+    </linearGradient>
+    <linearGradient id="lavenderGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#D8C2F0" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#8E63CB" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+  
+  <!-- Outer Rounded Diamond / Hexagon -->
+  <rect x="8" y="8" width="84" height="84" rx="24" fill="#24103D" stroke="#8E63CB" stroke-width="2.5" />
+  
+  <!-- Background Glow Orb -->
+  <circle cx="50" cy="50" r="32" fill="#5A2D91" opacity="0.3" filter="url(#glow)" />
+  
+  <!-- Stylized G Monogram for GRAPHIX -->
+  <path d="M 64 34 
+           C 58 26 44 25 36 33 
+           C 25 43 25 61 36 71 
+           C 46 80 62 76 68 67 
+           C 71 63 71 54 71 52 
+           L 48 52 
+           L 48 44 
+           L 79 44 
+           C 79 56 78 69 70 77 
+           C 60 88 40 89 28 78 
+           C 14 65 14 41 28 27 
+           C 41 15 62 16 73 27 
+           Z" 
+        fill="url(#purpleGrad)" />
+
+  <!-- Dynamic Precision Crosshair Dot / Accent (Printing Registration Mark) -->
+  <circle cx="50" cy="50" r="4.5" fill="#D8C2F0" />
+  <line x1="50" y1="42" x2="50" y2="44" stroke="#D8C2F0" stroke-width="2" stroke-linecap="round" />
+  <line x1="50" y1="56" x2="50" y2="58" stroke="#D8C2F0" stroke-width="2" stroke-linecap="round" />
+  <line x1="42" y1="50" x2="44" y2="50" stroke="#D8C2F0" stroke-width="2" stroke-linecap="round" />
+  <line x1="56" y1="50" x2="58" y2="50" stroke="#D8C2F0" stroke-width="2" stroke-linecap="round" />
+</svg>
