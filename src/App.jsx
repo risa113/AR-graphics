@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Preloader from './components/Preloader';
 import CustomCursor from './components/CustomCursor';
 import Header from './components/Header';
@@ -12,7 +12,7 @@ import WhyChooseUs from './components/WhyChooseUs';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import EnquiryModal from './components/EnquiryModal';
-import { MessageSquare, Phone } from 'lucide-react';
+import { MessageSquare } from 'lucide-react';
 import { soundManager } from './utils/sound';
 
 export default function App() {
@@ -21,23 +21,19 @@ export default function App() {
   const [activeEnquiryService, setActiveEnquiryService] = useState(null);
   const [prefilledMessage, setPrefilledMessage] = useState('');
 
-  // Handle service selection from any component
   const handleSelectService = (service) => {
     soundManager.playClick();
     setActiveEnquiryService(service);
     setModalOpen(true);
   };
 
-  // Handle estimation transfer from Calculator
   const handleEnquireWithEstimate = (estimate) => {
     soundManager.playClick();
     setPrefilledMessage(`Requesting formal quote for ${estimate.title} (${estimate.details}). Estimated range: ₹${estimate.min} - ₹${estimate.max}.`);
-    // Scroll directly to contact section
     const el = document.getElementById('contact');
     if (el) el.scrollIntoView({ behavior: 'smooth' });
   };
 
-  // Handle request similar from portfolio
   const handleRequestSimilar = (project) => {
     soundManager.playClick();
     setPrefilledMessage(`Interested in commissioning a project similar to: "${project.title}" (${project.category} - ${project.dimensions}).`);
@@ -46,15 +42,15 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0c0414] text-[#F8F6FA] selection:bg-[#8E63CB] selection:text-white relative w-full max-w-[100vw] overflow-x-hidden">
+    <div className="min-h-screen bg-white text-[#35204F] selection:bg-[#D8C2F0] selection:text-[#35204F] relative w-full max-w-[100vw] overflow-x-hidden overflow-x-clip">
       
-      {/* 1. Animated Preloader */}
+      {/* 1. Animated Preloader (Bright Studio Theme) */}
       {loading && <Preloader onComplete={() => setLoading(false)} />}
 
       {/* 2. Interactive Custom Cursor */}
       <CustomCursor />
 
-      {/* 3. Navigation Header */}
+      {/* 3. Navigation Header (Rebuilt: Floating, Minimalist, Animated) */}
       <Header
         onOpenEnquiry={() => {
           setActiveEnquiryService(null);
@@ -62,7 +58,7 @@ export default function App() {
         }}
       />
 
-      {/* 4. Signature 3D Hero Experience */}
+      {/* 4. Signature 3D Hero Experience (Bright Studio Lighting & Soft Shadows) */}
       <Hero
         onOpenEnquiry={() => {
           setActiveEnquiryService(null);
@@ -73,7 +69,7 @@ export default function App() {
       {/* 5. Continuous Kinetic Marquee & Production Metrics */}
       <StoryMarquee />
 
-      {/* 6. Services — Interactive 3D Showcase (All 11 Services) */}
+      {/* 6. Services — Creative 3D Presentation (All 11 Services) */}
       <Services onSelectService={handleSelectService} />
 
       {/* 7. Live Print Cost Estimator Calculator */}
@@ -99,7 +95,7 @@ export default function App() {
         prefilledMessage={prefilledMessage}
       />
 
-      {/* 12. Deep-Purple Studio Footer */}
+      {/* 12. Studio Footer (Bright Editorial Finish) */}
       <Footer onSelectService={handleSelectService} />
 
       {/* 13. Consultation / Enquiry Modal */}
@@ -117,13 +113,13 @@ export default function App() {
           target="_blank"
           rel="noopener noreferrer"
           onMouseEnter={() => soundManager.playHover()}
-          className="group relative flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-r from-[#25D366] to-[#128C7E] text-white shadow-[0_10px_25px_rgba(37,211,102,0.4)] hover:shadow-[0_15px_35px_rgba(37,211,102,0.6)] hover:scale-110 active:scale-95 transition-all duration-300"
+          className="group relative flex items-center justify-center w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-gradient-to-r from-[#25D366] to-[#128C7E] text-white shadow-[0_8px_20px_rgba(37,211,102,0.35)] hover:shadow-[0_12px_28px_rgba(37,211,102,0.5)] hover:scale-105 active:scale-95 transition-all duration-300"
           title="Chat with GRAPHIX on WhatsApp (+91 75300 73785)"
         >
           <MessageSquare className="w-6 h-6" />
           
           {/* Tooltip */}
-          <span className="absolute right-16 px-3 py-1.5 rounded-lg bg-[#150725] border border-[#D8C2F0]/20 text-[11px] font-semibold text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl">
+          <span className="absolute right-16 px-3 py-1.5 rounded-lg bg-white border border-[#EAE3F1] text-[11px] font-bold text-[#35204F] whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-md">
             WhatsApp Studio: 75300 73785
           </span>
         </a>

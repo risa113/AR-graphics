@@ -7,7 +7,6 @@ export default function CustomCursor() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    // Only enable on desktop pointer devices
     if (window.matchMedia('(pointer: coarse)').matches) {
       return;
     }
@@ -55,14 +54,14 @@ export default function CustomCursor() {
         style={{
           left: `${position.x}px`,
           top: `${position.y}px`,
-          transform: `translate(-50%, -50%) scale(${isHovering ? 1.6 : isClicking ? 0.8 : 1})`
+          transform: `translate(-50%, -50%) scale(${isHovering ? 1.5 : isClicking ? 0.8 : 1})`
         }}
       >
         <div
           className={`rounded-full transition-all duration-200 border ${
             isHovering
-              ? 'w-10 h-10 border-[#8E63CB] bg-[#8E63CB]/15 shadow-[0_0_15px_rgba(142,99,203,0.5)]'
-              : 'w-7 h-7 border-[#D8C2F0]/40'
+              ? 'w-9 h-9 border-[#5A2D91] bg-[#5A2D91]/10'
+              : 'w-7 h-7 border-[#8E63CB]/40'
           }`}
         />
       </div>
@@ -76,7 +75,7 @@ export default function CustomCursor() {
           transform: 'translate(-50%, -50%)'
         }}
       >
-        <div className="w-1.5 h-1.5 rounded-full bg-[#D8C2F0] shadow-[0_0_8px_#FFFFFF]" />
+        <div className="w-1.5 h-1.5 rounded-full bg-[#5A2D91]" />
       </div>
     </>
   );

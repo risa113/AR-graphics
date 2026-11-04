@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calculator, Send, MessageSquare, Check, Sparkles, Sliders } from 'lucide-react';
+import { Calculator, MessageSquare } from 'lucide-react';
 import { soundManager } from '../utils/sound';
 
 export default function PriceEstimator({ onEnquireWithEstimate }) {
@@ -22,12 +22,11 @@ export default function PriceEstimator({ onEnquireWithEstimate }) {
   const [ledLength, setLedLength] = useState(8);
   const [ledStyle, setLedStyle] = useState('acrylic-3d'); // acrylic-3d, halo, neon
 
-  // Calculate price estimate based on market rates in Tirunelveli
   const calculateEstimate = () => {
     switch (selectedService) {
       case 'flex': {
         const sqft = flexWidth * flexHeight;
-        let ratePerSqFt = 18; // base normal flex
+        let ratePerSqFt = 18;
         if (flexQuality === 'star') ratePerSqFt = 28;
         if (flexQuality === 'blackout') ratePerSqFt = 38;
         const total = sqft * ratePerSqFt;
@@ -96,28 +95,25 @@ export default function PriceEstimator({ onEnquireWithEstimate }) {
   };
 
   return (
-    <section id="estimator" className="relative py-20 bg-[#0e0517] border-y border-[#D8C2F0]/15">
-      {/* Background Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-[#5A2D91]/15 blur-[130px] pointer-events-none" />
-
+    <section id="estimator" className="relative py-24 bg-[#FAF9FC] border-y border-[#EAE3F1]">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
 
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-12">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1b0a2e] border border-[#D8C2F0]/20 text-[#D8C2F0] text-xs uppercase tracking-widest font-semibold mb-3">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#EAE3F1] text-[#5A2D91] text-xs uppercase tracking-widest font-bold mb-3 shadow-sm">
             <Calculator className="w-3.5 h-3.5 text-[#8E63CB]" />
             <span>Instant Print Quote Calculator</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight mb-3">
+          <h2 className="text-3xl sm:text-4xl font-black text-[#35204F] tracking-tight mb-3">
             ESTIMATE YOUR PROJECT IN REAL-TIME
           </h2>
-          <p className="text-xs sm:text-sm text-[#D8C2F0]/70">
+          <p className="text-xs sm:text-sm text-[#625B69]">
             Transparent pricing models calibrated for high quality materials and Melapalayam / Tirunelveli delivery.
           </p>
         </div>
 
-        {/* Calculator Card */}
-        <div className="rounded-3xl bg-[#150725] border border-[#D8C2F0]/20 p-6 sm:p-10 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+        {/* Calculator Card - Bright Luxury White */}
+        <div className="rounded-3xl bg-white border border-[#EAE3F1] p-6 sm:p-10 shadow-[0_8px_30px_rgba(53,32,79,0.06)]">
           
           {/* Service Selector Tabs */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-8">
@@ -135,8 +131,8 @@ export default function PriceEstimator({ onEnquireWithEstimate }) {
                 }}
                 className={`py-3 px-3 rounded-xl text-xs font-bold tracking-wide transition-all ${
                   selectedService === tab.id
-                    ? 'bg-gradient-to-r from-[#5A2D91] to-[#8E63CB] text-white shadow-[0_0_15px_rgba(142,99,203,0.4)]'
-                    : 'bg-[#1e0d36]/70 text-[#D8C2F0]/70 hover:text-white hover:bg-[#281146] border border-[#D8C2F0]/10'
+                    ? 'bg-[#5A2D91] text-white shadow-sm'
+                    : 'bg-[#FAF9FC] text-[#625B69] hover:text-[#35204F] hover:bg-[#F3ECFA] border border-[#EAE3F1]'
                 }`}
               >
                 {tab.name}
@@ -154,38 +150,38 @@ export default function PriceEstimator({ onEnquireWithEstimate }) {
               {selectedService === 'flex' && (
                 <>
                   <div>
-                    <div className="flex justify-between text-xs font-semibold text-[#D8C2F0] mb-2">
+                    <div className="flex justify-between text-xs font-bold text-[#35204F] mb-2">
                       <span>Width: {flexWidth} Feet</span>
                       <span>Height: {flexHeight} Feet</span>
                     </div>
                     <div className="space-y-3">
                       <div>
-                        <span className="text-[10px] text-gray-400 block mb-1">Banner Width</span>
+                        <span className="text-[10px] text-[#8A7E99] font-medium block mb-1">Banner Width</span>
                         <input
                           type="range"
                           min="3"
                           max="40"
                           value={flexWidth}
                           onChange={(e) => setFlexWidth(Number(e.target.value))}
-                          className="w-full accent-[#8E63CB]"
+                          className="w-full accent-[#5A2D91]"
                         />
                       </div>
                       <div>
-                        <span className="text-[10px] text-gray-400 block mb-1">Banner Height</span>
+                        <span className="text-[10px] text-[#8A7E99] font-medium block mb-1">Banner Height</span>
                         <input
                           type="range"
                           min="2"
                           max="20"
                           value={flexHeight}
                           onChange={(e) => setFlexHeight(Number(e.target.value))}
-                          className="w-full accent-[#8E63CB]"
+                          className="w-full accent-[#5A2D91]"
                         />
                       </div>
                     </div>
                   </div>
 
                   <div>
-                    <label className="text-xs font-semibold text-[#D8C2F0] block mb-2">
+                    <label className="text-xs font-bold text-[#35204F] block mb-2">
                       Flex Media Quality
                     </label>
                     <div className="grid grid-cols-3 gap-2">
@@ -197,10 +193,10 @@ export default function PriceEstimator({ onEnquireWithEstimate }) {
                         <button
                           key={item.id}
                           onClick={() => setFlexQuality(item.id)}
-                          className={`py-2 px-2 rounded-lg text-[11px] font-medium border ${
+                          className={`py-2 px-2 rounded-lg text-[11px] font-semibold border ${
                             flexQuality === item.id
-                              ? 'bg-[#5A2D91] border-[#8E63CB] text-white'
-                              : 'bg-[#1b0a2e] border-white/10 text-gray-400'
+                              ? 'bg-[#5A2D91] border-[#5A2D91] text-white shadow-sm'
+                              : 'bg-[#FAF9FC] border-[#EAE3F1] text-[#625B69]'
                           }`}
                         >
                           {item.name}
@@ -215,7 +211,7 @@ export default function PriceEstimator({ onEnquireWithEstimate }) {
               {selectedService === 'cards' && (
                 <>
                   <div>
-                    <label className="text-xs font-semibold text-[#D8C2F0] block mb-2">
+                    <label className="text-xs font-bold text-[#35204F] block mb-2">
                       Card Quantity
                     </label>
                     <div className="grid grid-cols-3 gap-2">
@@ -225,8 +221,8 @@ export default function PriceEstimator({ onEnquireWithEstimate }) {
                           onClick={() => setCardQuantity(qty)}
                           className={`py-2 px-2 rounded-lg text-xs font-bold border ${
                             cardQuantity === qty
-                              ? 'bg-[#5A2D91] border-[#8E63CB] text-white'
-                              : 'bg-[#1b0a2e] border-white/10 text-gray-400'
+                              ? 'bg-[#5A2D91] border-[#5A2D91] text-white shadow-sm'
+                              : 'bg-[#FAF9FC] border-[#EAE3F1] text-[#625B69]'
                           }`}
                         >
                           {qty} Cards
@@ -236,7 +232,7 @@ export default function PriceEstimator({ onEnquireWithEstimate }) {
                   </div>
 
                   <div>
-                    <label className="text-xs font-semibold text-[#D8C2F0] block mb-2">
+                    <label className="text-xs font-bold text-[#35204F] block mb-2">
                       Premium Finish
                     </label>
                     <div className="grid grid-cols-3 gap-2">
@@ -248,10 +244,10 @@ export default function PriceEstimator({ onEnquireWithEstimate }) {
                         <button
                           key={finish.id}
                           onClick={() => setCardFinish(finish.id)}
-                          className={`py-2 px-2 rounded-lg text-[11px] font-medium border ${
+                          className={`py-2 px-2 rounded-lg text-[11px] font-semibold border ${
                             cardFinish === finish.id
-                              ? 'bg-[#5A2D91] border-[#8E63CB] text-white'
-                              : 'bg-[#1b0a2e] border-white/10 text-gray-400'
+                              ? 'bg-[#5A2D91] border-[#5A2D91] text-white shadow-sm'
+                              : 'bg-[#FAF9FC] border-[#EAE3F1] text-[#625B69]'
                           }`}
                         >
                           {finish.name}
@@ -266,7 +262,7 @@ export default function PriceEstimator({ onEnquireWithEstimate }) {
               {selectedService === 'vinyl' && (
                 <>
                   <div>
-                    <div className="flex justify-between text-xs font-semibold text-[#D8C2F0] mb-2">
+                    <div className="flex justify-between text-xs font-bold text-[#35204F] mb-2">
                       <span>Area: {vinylArea} Square Feet</span>
                     </div>
                     <input
@@ -275,12 +271,12 @@ export default function PriceEstimator({ onEnquireWithEstimate }) {
                       max="100"
                       value={vinylArea}
                       onChange={(e) => setVinylArea(Number(e.target.value))}
-                      className="w-full accent-[#8E63CB]"
+                      className="w-full accent-[#5A2D91]"
                     />
                   </div>
 
                   <div>
-                    <label className="text-xs font-semibold text-[#D8C2F0] block mb-2">
+                    <label className="text-xs font-bold text-[#35204F] block mb-2">
                       Vinyl Finish Type
                     </label>
                     <div className="grid grid-cols-3 gap-2">
@@ -292,10 +288,10 @@ export default function PriceEstimator({ onEnquireWithEstimate }) {
                         <button
                           key={t.id}
                           onClick={() => setVinylType(t.id)}
-                          className={`py-2 px-2 rounded-lg text-[11px] font-medium border ${
+                          className={`py-2 px-2 rounded-lg text-[11px] font-semibold border ${
                             vinylType === t.id
-                              ? 'bg-[#5A2D91] border-[#8E63CB] text-white'
-                              : 'bg-[#1b0a2e] border-white/10 text-gray-400'
+                              ? 'bg-[#5A2D91] border-[#5A2D91] text-white shadow-sm'
+                              : 'bg-[#FAF9FC] border-[#EAE3F1] text-[#625B69]'
                           }`}
                         >
                           {t.name}
@@ -310,7 +306,7 @@ export default function PriceEstimator({ onEnquireWithEstimate }) {
               {selectedService === 'led' && (
                 <>
                   <div>
-                    <div className="flex justify-between text-xs font-semibold text-[#D8C2F0] mb-2">
+                    <div className="flex justify-between text-xs font-bold text-[#35204F] mb-2">
                       <span>Running Length: {ledLength} Feet</span>
                     </div>
                     <input
@@ -319,12 +315,12 @@ export default function PriceEstimator({ onEnquireWithEstimate }) {
                       max="30"
                       value={ledLength}
                       onChange={(e) => setLedLength(Number(e.target.value))}
-                      className="w-full accent-[#8E63CB]"
+                      className="w-full accent-[#5A2D91]"
                     />
                   </div>
 
                   <div>
-                    <label className="text-xs font-semibold text-[#D8C2F0] block mb-2">
+                    <label className="text-xs font-bold text-[#35204F] block mb-2">
                       Signage Style
                     </label>
                     <div className="grid grid-cols-3 gap-2">
@@ -336,10 +332,10 @@ export default function PriceEstimator({ onEnquireWithEstimate }) {
                         <button
                           key={s.id}
                           onClick={() => setLedStyle(s.id)}
-                          className={`py-2 px-2 rounded-lg text-[11px] font-medium border ${
+                          className={`py-2 px-2 rounded-lg text-[11px] font-semibold border ${
                             ledStyle === s.id
-                              ? 'bg-[#5A2D91] border-[#8E63CB] text-white'
-                              : 'bg-[#1b0a2e] border-white/10 text-gray-400'
+                              ? 'bg-[#5A2D91] border-[#5A2D91] text-white shadow-sm'
+                              : 'bg-[#FAF9FC] border-[#EAE3F1] text-[#625B69]'
                           }`}
                         >
                           {s.name}
@@ -352,37 +348,35 @@ export default function PriceEstimator({ onEnquireWithEstimate }) {
 
             </div>
 
-            {/* Right Result Estimation Box */}
-            <div className="rounded-2xl bg-gradient-to-br from-[#24103D] via-[#1a0a2f] to-[#120522] border border-[#8E63CB]/40 p-6 sm:p-8 flex flex-col justify-between shadow-2xl relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-[#8E63CB]/20 blur-2xl pointer-events-none" />
-
+            {/* Right Result Estimation Box - Light Lavender Architectural Card */}
+            <div className="rounded-2xl bg-[#F3ECFA]/60 border border-[#D8C2F0] p-6 sm:p-8 flex flex-col justify-between shadow-sm relative overflow-hidden">
               <div>
-                <span className="text-[10px] font-mono tracking-widest text-[#D8C2F0] uppercase block mb-1">
+                <span className="text-[10px] font-mono font-bold tracking-widest text-[#5A2D91] uppercase block mb-1">
                   CALCULATED ESTIMATION
                 </span>
-                <h3 className="text-xl font-bold text-white mb-2">
+                <h3 className="text-xl font-black text-[#35204F] mb-1.5">
                   {estimate.title}
                 </h3>
-                <p className="text-xs text-[#D8C2F0]/80 font-mono mb-6">
+                <p className="text-xs text-[#625B69] font-mono mb-6">
                   {estimate.details}
                 </p>
 
                 {/* Price Display */}
                 <div className="mb-2">
-                  <div className="text-3xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-[#D8C2F0] to-[#8E63CB]">
+                  <div className="text-3xl sm:text-4xl font-black text-[#5A2D91]">
                     ₹{estimate.min.toLocaleString('en-IN')} – ₹{estimate.max.toLocaleString('en-IN')}*
                   </div>
-                  <span className="text-[10px] text-gray-400 block mt-1">
+                  <span className="text-[10px] text-[#8A7E99] block mt-1">
                     *Taxes & custom installation evaluated per project specifics.
                   </span>
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="mt-6 pt-6 border-t border-white/10 flex flex-col sm:flex-row gap-3">
+              <div className="mt-6 pt-6 border-t border-[#EAE3F1] flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={handleSendToWhatsApp}
-                  className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-[#25D366] to-[#128C7E] hover:opacity-95 text-xs font-bold text-white flex items-center justify-center gap-2 shadow-lg transition-transform active:scale-95"
+                  className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-[#25D366] to-[#128C7E] hover:opacity-95 text-xs font-bold text-white flex items-center justify-center gap-2 shadow-sm transition-transform active:scale-95"
                 >
                   <MessageSquare className="w-4 h-4" />
                   <span>Send Estimate To WhatsApp</span>
@@ -393,7 +387,7 @@ export default function PriceEstimator({ onEnquireWithEstimate }) {
                     soundManager.playClick();
                     if (onEnquireWithEstimate) onEnquireWithEstimate(estimate);
                   }}
-                  className="py-3 px-4 rounded-xl bg-[#5A2D91] hover:bg-[#6c35ad] text-xs font-bold text-white flex items-center justify-center gap-1.5 transition-colors"
+                  className="py-3 px-4 rounded-xl bg-[#5A2D91] hover:bg-[#6c35ad] text-xs font-bold text-white flex items-center justify-center gap-1.5 transition-colors shadow-sm"
                 >
                   <span>Book Consultation</span>
                 </button>

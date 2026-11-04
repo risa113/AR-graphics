@@ -60,3 +60,4 @@ export const whyChooseData = [
     points: ['Integrated design & production floor', 'Direct material sample consultation', 'On-site installation for LED & vinyl']
   }
 ];
+

@@ -264,3 +264,4 @@ export const servicesData = [
     accentColor: '#5A2D91'
   }
 ];
+
