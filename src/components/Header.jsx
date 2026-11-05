@@ -91,10 +91,10 @@ export default function Header({ onOpenEnquiry }) {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white/95 backdrop-blur-xl border-b border-[#EAE3F1] ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white/98 backdrop-blur-xl border-b border-[#EAE3F1] ${
         scrolled
           ? 'py-2.5 shadow-[0_8px_30px_rgba(53,32,79,0.08)]'
-          : 'py-3.5 sm:py-4 shadow-[0_2px_16px_rgba(53,32,79,0.04)]'
+          : 'py-3 sm:py-3.5 shadow-[0_2px_14px_rgba(53,32,79,0.04)]'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
@@ -104,7 +104,7 @@ export default function Header({ onOpenEnquiry }) {
           <button
             onClick={handleLogoClick}
             onMouseEnter={() => soundManager.playHover()}
-            className="group flex items-center gap-2.5 sm:gap-3.5 focus:outline-none shrink-0 text-left cursor-pointer"
+            className="group flex items-center gap-2.5 sm:gap-3 focus:outline-none shrink-0 text-left cursor-pointer"
           >
             {/* Logo Monogram Box — Dark Purple Lavender Gradient with 3D White Monogram */}
             <div className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-[#24103D] via-[#5A2D91] to-[#7B42BC] border border-[#D8C2F0]/40 shadow-[0_4px_16px_rgba(90,45,145,0.35)] p-1.5 transition-all duration-300 group-hover:scale-105 group-hover:shadow-[0_6px_22px_rgba(90,45,145,0.5)] flex items-center justify-center overflow-hidden shrink-0">
@@ -122,7 +122,7 @@ export default function Header({ onOpenEnquiry }) {
                 <span className="w-1.5 h-1.5 rounded-full bg-[#8E63CB]" />
               </span>
               <span className="text-[7.5px] sm:text-[8.5px] uppercase tracking-[0.2em] text-[#5A2D91] font-bold">
-                Create Visibility • Build Identity
+                Design & Print Studio • Melapalayam
               </span>
             </div>
           </button>

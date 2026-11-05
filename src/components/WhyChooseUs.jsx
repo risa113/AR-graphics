@@ -130,14 +130,14 @@ export default function WhyChooseUs() {
         if (pillarCards.length > 0) {
           gsap.fromTo(
             pillarCards,
-            { opacity: 0, y: 40, scale: 0.95 },
+            { opacity: 0, y: 65, scale: 0.84 },
             {
               opacity: 1,
               y: 0,
               scale: 1,
               duration: 0.85,
               stagger: 0.09,
-              ease: 'power3.out',
+              ease: 'back.out(1.8)',
               scrollTrigger: {
                 trigger: cardsGridRef.current,
                 start: 'top 82%',

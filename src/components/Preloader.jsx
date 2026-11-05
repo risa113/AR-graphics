@@ -33,9 +33,19 @@ export default function Preloader({ onComplete }) {
       }, 200);
     }, 1400);
 
+    // Global hook to bypass preloader for testing/capture
+    window.__completePreloader = () => {
+      clearInterval(interval);
+      clearTimeout(fallback);
+      setPercent(100);
+      setExiting(true);
+      if (onCompleteRef.current) onCompleteRef.current();
+    };
+
     return () => {
       clearInterval(interval);
       clearTimeout(fallback);
+      delete window.__completePreloader;
     };
   }, []);
 

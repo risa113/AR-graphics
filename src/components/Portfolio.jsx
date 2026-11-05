@@ -135,19 +135,20 @@ export default function Portfolio({ onRequestSimilar }) {
         );
       }
 
-      // 5. Staggered Portfolio Cards entrance
+      // 5. Heavy Spring Pop & Slide Portfolio Cards entrance
       if (cardsContainerRef.current) {
         const cards = cardsContainerRef.current.querySelectorAll('.portfolio-card-item');
         if (cards.length > 0) {
           gsap.fromTo(
             cards,
-            { opacity: 0, y: 45, scale: 0.96 },
+            { opacity: 0, y: 70, scale: 0.84 },
             {
               opacity: 1,
               y: 0,
               scale: 1,
               duration: 0.85,
               stagger: 0.08,
+              ease: 'back.out(1.8)',
               ease: 'power3.out',
               scrollTrigger: {
                 trigger: cardsContainerRef.current,

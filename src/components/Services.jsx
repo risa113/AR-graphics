@@ -157,20 +157,20 @@ export default function Services({ onSelectService }) {
         );
       }
 
-      // 5. Staggered Service Cards entrance
+      // 5. Heavy Spring Pop & Slide Service Cards entrance
       if (cardsContainerRef.current) {
         const cards = cardsContainerRef.current.querySelectorAll('.service-card-item');
         if (cards.length > 0) {
           gsap.fromTo(
             cards,
-            { opacity: 0, y: 45, scale: 0.96 },
+            { opacity: 0, y: 70, scale: 0.84 },
             {
               opacity: 1,
               y: 0,
               scale: 1,
               duration: 0.85,
               stagger: 0.08,
-              ease: 'power3.out',
+              ease: 'back.out(1.8)',
               scrollTrigger: {
                 trigger: cardsContainerRef.current,
                 start: 'top 85%',

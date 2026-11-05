@@ -27,15 +27,16 @@ export default function LocalSeoHub() {
     if (prefersReducedMotion) return;
 
     const ctx = gsap.context(() => {
-      // Header reveal
+      // Header reveal with spring pop
       gsap.fromTo(
         '.seo-hub-header',
-        { opacity: 0, y: 30 },
+        { opacity: 0, y: 40, scale: 0.92 },
         {
           opacity: 1,
           y: 0,
-          duration: 0.8,
-          ease: 'power3.out',
+          scale: 1,
+          duration: 0.85,
+          ease: 'back.out(1.8)',
           scrollTrigger: {
             trigger: containerRef.current,
             start: 'top 82%',
@@ -43,17 +44,17 @@ export default function LocalSeoHub() {
         }
       );
 
-      // Grid cards staggered reveal
+      // Grid cards staggered heavy elastic pop & slide
       gsap.fromTo(
         '.seo-card-item',
-        { opacity: 0, y: 35, scale: 0.97 },
+        { opacity: 0, y: 55, scale: 0.84 },
         {
           opacity: 1,
           y: 0,
           scale: 1,
-          duration: 0.7,
+          duration: 0.8,
           stagger: 0.08,
-          ease: 'power2.out',
+          ease: 'back.out(1.8)',
           scrollTrigger: {
             trigger: '.seo-cards-grid',
             start: 'top 85%',
