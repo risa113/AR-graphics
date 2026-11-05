@@ -136,8 +136,8 @@ export default function Hero({ onOpenEnquiry }) {
       {/* 3D WebGL Three.js Canvas Scene (Bright Studio) */}
       <HeroThreeScene />
 
-      {/* Subtle Natural Studio Sunlight Beam */}
-      <div className="absolute top-0 right-0 w-[350px] sm:w-[600px] h-[500px] bg-gradient-to-b from-white/80 via-[#F3ECFA]/30 to-transparent blur-3xl pointer-events-none" />
+      {/* Subtle Natural Studio Sunlight Beam — Hardware Accelerated */}
+      <div className="absolute top-0 right-0 w-[350px] sm:w-[600px] h-[500px] bg-gradient-to-b from-white/80 via-[#F3ECFA]/30 to-transparent blur-2xl transform-gpu will-change-transform pointer-events-none" />
 
       {/* Hero Foreground Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">

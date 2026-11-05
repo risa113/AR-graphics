@@ -91,42 +91,39 @@ export default function App() {
     window.__dismissPreloader = () => setLoading(false);
   }, []);
 
-  // Lenis Smooth Scrolling + GSAP ScrollTrigger Global Sync
+  // Ultra-Smooth High-FPS Lenis Scrolling + GSAP ScrollTrigger Sync
   useEffect(() => {
+    const isTouch = window.matchMedia('(pointer: coarse)').matches;
+
     const lenis = new Lenis({
-      duration: 1.15,
+      duration: isTouch ? 0.6 : 0.85,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       direction: 'vertical',
       gestureDirection: 'vertical',
       smooth: true,
       smoothTouch: false,
-      touchMultiplier: 1.8,
+      touchMultiplier: 1.0,
+      wheelMultiplier: 1.0,
     });
 
     window.__lenis = lenis;
     lenis.on('scroll', ScrollTrigger.update);
+
+    // Ultra-lightweight Top Reading Progress Indicator (Direct GPU scaleX, no ScrollTrigger scrub overhead)
+    const progressBar = document.getElementById('scroll-progress-bar');
+    if (progressBar) {
+      lenis.on('scroll', ({ progress }) => {
+        progressBar.style.transform = `scaleX(${progress})`;
+      });
+    }
 
     const updateTicker = (time) => {
       lenis.raf(time * 1000);
     };
 
     gsap.ticker.add(updateTicker);
-    gsap.ticker.lagSmoothing(0);
-
-    // Global Top Reading Progress Bar
-    const progressBar = document.getElementById('scroll-progress-bar');
-    if (progressBar) {
-      gsap.to(progressBar, {
-        scaleX: 1,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: document.body,
-          start: 'top top',
-          end: 'bottom bottom',
-          scrub: 0.15,
-        },
-      });
-    }
+    // Standard lag smoothing to maintain fluid 60-120fps without hitching
+    gsap.ticker.lagSmoothing(500, 33);
 
     return () => {
       gsap.ticker.remove(updateTicker);

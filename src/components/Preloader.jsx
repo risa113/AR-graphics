@@ -55,8 +55,8 @@ export default function Preloader({ onComplete }) {
         exiting ? 'opacity-0 pointer-events-none scale-105' : 'opacity-100'
       }`}
     >
-      {/* Background Soft Ambient Light */}
-      <div className="absolute w-[450px] h-[450px] rounded-full bg-[#D8C2F0]/30 blur-[100px] pointer-events-none" />
+      {/* Background Soft Ambient Light — GPU Accelerated Radial */}
+      <div className="absolute w-[450px] h-[450px] rounded-full bg-[radial-gradient(circle,rgba(216,194,240,0.45)_0%,transparent_70%)] pointer-events-none transform-gpu" />
 
       <div className="relative z-10 flex flex-col items-center">
         {/* Animated Monogram Logo */}

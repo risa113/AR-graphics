@@ -18,21 +18,27 @@ export default function HeroThreeScene() {
     const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
     camera.position.set(0, 0.5, 9.2);
 
-    // --- Renderer Setup (Bright Studio) ---
+    // --- Renderer Setup (High Performance Studio) ---
+    const isMobile = window.innerWidth < 768;
     const renderer = new THREE.WebGLRenderer({
-      antialias: true,
+      antialias: !isMobile,
       alpha: true,
-      powerPreference: 'high-performance'
+      powerPreference: 'high-performance',
+      precision: isMobile ? 'mediump' : 'highp'
     });
     renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.0 : 1.5));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.15;
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    
+    // Disable shadow maps on mobile to save GPU cycles; use optimized 1024 on desktop
+    renderer.shadowMap.enabled = !isMobile;
+    if (!isMobile) {
+      renderer.shadowMap.type = THREE.PCFShadowMap;
+    }
     container.appendChild(renderer.domElement);
 
-    // --- Natural Studio Lighting (Alex Bender AICM Reference) ---
+    // --- Natural Studio Lighting ---
     const ambientLight = new THREE.AmbientLight(0xFFFFFF, 1.6);
     scene.add(ambientLight);
 
@@ -40,15 +46,17 @@ export default function HeroThreeScene() {
     hemiLight.position.set(0, 10, 0);
     scene.add(hemiLight);
 
-    // Primary warm directional sunlight casting soft realistic architectural shadows
+    // Primary warm directional sunlight
     const sunLight = new THREE.DirectionalLight(0xFFF8F0, 3.2);
     sunLight.position.set(7, 10, 6);
-    sunLight.castShadow = true;
-    sunLight.shadow.mapSize.width = 2048;
-    sunLight.shadow.mapSize.height = 2048;
-    sunLight.shadow.camera.near = 0.5;
-    sunLight.shadow.camera.far = 30;
-    sunLight.shadow.bias = -0.0005;
+    if (!isMobile) {
+      sunLight.castShadow = true;
+      sunLight.shadow.mapSize.width = 1024;
+      sunLight.shadow.mapSize.height = 1024;
+      sunLight.shadow.camera.near = 0.5;
+      sunLight.shadow.camera.far = 30;
+      sunLight.shadow.bias = -0.0005;
+    }
     scene.add(sunLight);
 
     // Secondary soft purple studio fill light
@@ -56,17 +64,17 @@ export default function HeroThreeScene() {
     fillLight.position.set(-6, -2, -2);
     scene.add(fillLight);
 
-    // Dynamic Violet / Magenta Neon Core Light (Reference: Glowing Seams in AICM)
-    const coreNeonLight = new THREE.PointLight(0x8E63CB, 6.0, 10);
+    // Dynamic Violet / Magenta Neon Core Light
+    const coreNeonLight = new THREE.PointLight(0x8E63CB, 5.0, 8);
     coreNeonLight.position.set(2.0, -0.3, 0.4);
     scene.add(coreNeonLight);
 
-    const accentNeonLight = new THREE.PointLight(0xD8C2F0, 4.5, 8);
+    const accentNeonLight = new THREE.PointLight(0xD8C2F0, 3.5, 6);
     accentNeonLight.position.set(1.4, 1.2, -0.2);
     scene.add(accentNeonLight);
 
     // Subtle interactive mouse point light
-    const mouseLight = new THREE.PointLight(0xFFFFFF, 3.0, 10);
+    const mouseLight = new THREE.PointLight(0xFFFFFF, 2.5, 8);
     mouseLight.position.set(0, 0, 4);
     scene.add(mouseLight);
 
@@ -74,8 +82,8 @@ export default function HeroThreeScene() {
     const worldGroup = new THREE.Group();
     scene.add(worldGroup);
 
-    // --- 1. Architectural Floor Plane (45° Diagonal Seams with Soft Shadow Absorption) ---
-    const floorGeo = new THREE.PlaneGeometry(40, 40);
+    // --- 1. Architectural Floor Plane ---
+    const floorGeo = new THREE.PlaneGeometry(36, 36);
     const floorMat = new THREE.MeshStandardMaterial({
       color: 0xFAF9FC,
       roughness: 0.65,
@@ -84,17 +92,16 @@ export default function HeroThreeScene() {
     const floorMesh = new THREE.Mesh(floorGeo, floorMat);
     floorMesh.rotation.x = -Math.PI / 2;
     floorMesh.position.y = -3.8;
-    floorMesh.receiveShadow = true;
+    floorMesh.receiveShadow = !isMobile;
     worldGroup.add(floorMesh);
 
     // Architectural 45° grid seam lines
-    const gridHelper = new THREE.GridHelper(36, 36, 0xEAE3F1, 0xF3ECFA);
+    const gridHelper = new THREE.GridHelper(32, 24, 0xEAE3F1, 0xF3ECFA);
     gridHelper.position.set(0, -3.79, 0);
     gridHelper.rotation.y = Math.PI / 4;
     worldGroup.add(gridHelper);
 
-    // --- 2. Organic Flowing 3D Wave Track (The Curving Path from the Video) ---
-    // High-precision smooth CatmullRom 3D spline matching the S-curve wave
+    // --- 2. Organic Flowing 3D Wave Track ---
     const wavePoints = [
       new THREE.Vector3(1.6, 4.2, -0.6),
       new THREE.Vector3(2.2, 2.6, -0.3),
@@ -105,39 +112,40 @@ export default function HeroThreeScene() {
       new THREE.Vector3(1.0, -2.1, 0.1),
       new THREE.Vector3(0.8, -0.6, 0.4),
       new THREE.Vector3(1.2, 1.2, 0.0),
-      new THREE.Vector3(1.6, 4.2, -0.6) // Closed loop
+      new THREE.Vector3(1.6, 4.2, -0.6)
     ];
     const waveCurve = new THREE.CatmullRomCurve3(wavePoints, true, 'centripetal');
 
-    // Glossy Pearl White Wave Pipe Geometry
-    const waveGeo = new THREE.TubeGeometry(waveCurve, 160, 0.24, 28, true);
+    // Highly optimized segments: 96 / 16 instead of 160 / 28 (60% vertex reduction)
+    const waveGeo = new THREE.TubeGeometry(waveCurve, 96, 0.24, 16, true);
     const waveMat = new THREE.MeshPhysicalMaterial({
       color: 0xFFFFFF,
       roughness: 0.14,
       metalness: 0.08,
-      clearcoat: 1.0,
-      clearcoatRoughness: 0.06,
-      reflectivity: 0.95
+      clearcoat: 0.8,
+      clearcoatRoughness: 0.08,
+      reflectivity: 0.9
     });
     const waveMesh = new THREE.Mesh(waveGeo, waveMat);
-    waveMesh.castShadow = true;
-    waveMesh.receiveShadow = true;
+    waveMesh.castShadow = !isMobile;
+    waveMesh.receiveShadow = !isMobile;
     worldGroup.add(waveMesh);
 
     // --- 3. The Signature Glazed Royal Purple Ribbon Sculpture ---
-    const ribbonGeo = new THREE.TorusKnotGeometry(1.55, 0.38, 140, 28, 2, 3);
+    // Optimized segments: 84 / 16 instead of 140 / 28
+    const ribbonGeo = new THREE.TorusKnotGeometry(1.55, 0.38, 84, 16, 2, 3);
     const ribbonMat = new THREE.MeshPhysicalMaterial({
       color: 0x5A2D91,
       metalness: 0.42,
       roughness: 0.2,
-      clearcoat: 1.0,
-      clearcoatRoughness: 0.06,
+      clearcoat: 0.8,
+      clearcoatRoughness: 0.08,
       reflectivity: 0.9
     });
     const mainRibbon = new THREE.Mesh(ribbonGeo, ribbonMat);
     mainRibbon.position.set(1.9, -0.2, -0.4);
-    mainRibbon.castShadow = true;
-    mainRibbon.receiveShadow = true;
+    mainRibbon.castShadow = !isMobile;
+    mainRibbon.receiveShadow = !isMobile;
     worldGroup.add(mainRibbon);
 
     // --- 4. The Architectural Block / Platform (Rising Block with Neon Glow from AICM Video) ---
@@ -291,7 +299,7 @@ export default function HeroThreeScene() {
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, w < 768 ? 1.0 : 1.5));
 
       if (w < 768) {
         worldGroup.position.set(-0.3, 0.1, -1.0);
@@ -308,12 +316,19 @@ export default function HeroThreeScene() {
     window.addEventListener('resize', handleResize);
     handleResize();
 
-    // --- Animation Loop (6-Second Infinite Loop matching the Video) ---
-    let animationFrameId;
-    let clock = new THREE.Clock();
-    const LOOP_DURATION = 6.0; // 6 seconds loop like video
+    // --- Efficient Animation Loop with IntersectionObserver & Tab Visibility Control ---
+    let animationFrameId = null;
+    let isIntersecting = true;
+    let isTabVisible = !document.hidden;
+    const clock = new THREE.Clock();
+    const LOOP_DURATION = 6.0;
 
     const animate = () => {
+      if (!isIntersecting || !isTabVisible) {
+        animationFrameId = null;
+        return;
+      }
+
       animationFrameId = requestAnimationFrame(animate);
       const elapsedTime = clock.getElapsedTime();
 
@@ -321,25 +336,20 @@ export default function HeroThreeScene() {
       currentX += (targetX - currentX) * 0.05;
       currentY += (targetY - currentY) * 0.05;
 
-      // 1. EXACT ROLLING COIN ALONG THE 3D WAVE CURVE
+      // 1. Rolling coin along the 3D wave curve
       const progress = (elapsedTime / LOOP_DURATION) % 1.0;
       const point = waveCurve.getPointAt(progress);
       const tangent = waveCurve.getTangentAt(progress).normalize();
 
-      // Compute normal & binormal to place coin standing on track
       const upVector = new THREE.Vector3(0, 1, 0);
       const normal = new THREE.Vector3().crossVectors(tangent, upVector).normalize();
       const actualUp = new THREE.Vector3().crossVectors(normal, tangent).normalize();
 
-      // Offset coin to sit directly on top of the tube
       const coinPos = point.clone().add(actualUp.clone().multiplyScalar(0.32));
       coinGroup.position.copy(coinPos);
 
-      // Orient coin with tangent
       const rotMatrix = new THREE.Matrix4().makeBasis(tangent, actualUp, normal);
       coinGroup.quaternion.setFromRotationMatrix(rotMatrix);
-
-      // Spin coin like a rolling wheel
       coinMesh.rotation.y = elapsedTime * 8.5;
 
       // 2. Wave Mesh Subtle Organic Breathing
@@ -353,9 +363,8 @@ export default function HeroThreeScene() {
       blockGroup.position.y = -0.6 + Math.sin(elapsedTime * 1.2) * 0.06;
       blockMesh.rotation.y = Math.PI / 4 + Math.sin(elapsedTime * 0.6) * 0.08;
 
-      // Neon light pulse matching the video
-      coreNeonLight.intensity = 5.0 + Math.sin(elapsedTime * 2.5) * 2.0;
-      accentNeonLight.intensity = 4.0 + Math.cos(elapsedTime * 2.0) * 1.5;
+      coreNeonLight.intensity = 4.5 + Math.sin(elapsedTime * 2.5) * 1.5;
+      accentNeonLight.intensity = 3.5 + Math.cos(elapsedTime * 2.0) * 1.2;
 
       // 5. Card Deck Float
       cardGroup.rotation.y = Math.sin(elapsedTime * 0.7) * 0.12 + currentX * 0.12;
@@ -382,11 +391,51 @@ export default function HeroThreeScene() {
       renderer.render(scene, camera);
     };
 
-    animate();
+    const startAnimation = () => {
+      if (!animationFrameId && isIntersecting && isTabVisible) {
+        clock.start();
+        animationFrameId = requestAnimationFrame(animate);
+      }
+    };
+
+    const stopAnimation = () => {
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+        clock.stop();
+      }
+    };
+
+    // Pause Three.js completely when scrolled off-screen
+    const observer = new IntersectionObserver(([entry]) => {
+      isIntersecting = entry.isIntersecting;
+      if (isIntersecting) {
+        startAnimation();
+      } else {
+        stopAnimation();
+      }
+    }, { threshold: 0.05 });
+
+    observer.observe(container);
+
+    // Pause when user switches browser tab
+    const handleVisibilityChange = () => {
+      isTabVisible = !document.hidden;
+      if (isTabVisible && isIntersecting) {
+        startAnimation();
+      } else {
+        stopAnimation();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    startAnimation();
 
     // --- Cleanup ---
     return () => {
-      cancelAnimationFrame(animationFrameId);
+      stopAnimation();
+      observer.disconnect();
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('scroll', handleScroll);

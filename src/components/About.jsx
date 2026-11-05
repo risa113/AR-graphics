@@ -165,8 +165,8 @@ export default function About({ onOpenEnquiry }) {
 
   return (
     <section ref={sectionRef} id="about" className="relative py-28 bg-white overflow-hidden">
-      {/* Background Studio Light Wash */}
-      <div className="absolute top-1/2 left-0 w-[500px] h-[500px] bg-[#F3ECFA]/40 blur-[130px] pointer-events-none" />
+      {/* Background Studio Light Wash — GPU Accelerated Radial */}
+      <div className="absolute top-1/2 left-0 w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(243,236,250,0.5)_0%,transparent_70%)] pointer-events-none transform-gpu will-change-transform" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 

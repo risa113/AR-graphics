@@ -164,12 +164,20 @@ html.lenis, html.lenis body {
 
 /* Keyframes */
 @keyframes marquee {
-  0% { transform: translateX(0%); }
-  100% { transform: translateX(-100%); }
+  0% { transform: translate3d(0%, 0, 0); }
+  100% { transform: translate3d(-100%, 0, 0); }
 }
 
 .animate-marquee {
   display: flex;
   flex-shrink: 0;
   animation: marquee 30s linear infinite;
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/* GPU promotion for buttery-smooth 60fps animations */
+.will-change-transform {
+  will-change: transform;
+  transform: translateZ(0);
 }

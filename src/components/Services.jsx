@@ -236,8 +236,8 @@ export default function Services({ onSelectService }) {
 
   return (
     <section ref={containerRef} id="services" className="relative py-24 bg-white overflow-hidden">
-      {/* Background Soft Studio Gradient */}
-      <div className="absolute top-1/4 right-0 w-[550px] h-[550px] bg-[#F3ECFA]/40 blur-[130px] pointer-events-none" />
+      {/* Background Soft Studio Gradient — GPU Accelerated Radial */}
+      <div className="absolute top-1/4 right-0 w-[550px] h-[550px] bg-[radial-gradient(circle,rgba(243,236,250,0.5)_0%,transparent_70%)] pointer-events-none transform-gpu will-change-transform" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
