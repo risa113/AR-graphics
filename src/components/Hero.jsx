@@ -144,7 +144,7 @@ export default function Hero({ onOpenEnquiry }) {
           {/* Location & Studio Badge with Official Monogram */}
           <div className="hero-badge inline-flex items-center gap-2.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-white/95 border border-[#EAE3F1] shadow-[0_4px_16px_rgba(53,32,79,0.06)] backdrop-blur-md mb-5 max-w-full">
             <div className="w-5 h-5 rounded-full bg-white border border-[#EAE3F1] p-0.5 flex items-center justify-center shrink-0">
-              <img src="/logo-monogram.svg" alt="Icon" className="w-full h-full object-contain" />
+              <img src={`${import.meta.env.BASE_URL}logo-monogram.svg`} alt="Icon" className="w-full h-full object-contain" />
             </div>
             <span className="text-[10px] sm:text-xs uppercase tracking-[0.16em] sm:tracking-[0.2em] font-bold text-[#5A2D91] truncate">
               Graphix Studio • Melapalayam

@@ -212,7 +212,7 @@ export default function About({ onOpenEnquiry }) {
                 <div className="absolute inset-0 rounded-3xl bg-[#5A2D91]/10 blur-xl group-hover:bg-[#5A2D91]/20 transition-colors" />
                 <div className="relative z-10 w-32 h-32 rounded-3xl bg-white p-5 border border-[#EAE3F1] shadow-[0_8px_25px_rgba(90,45,145,0.08)] flex items-center justify-center transform group-hover:scale-105 group-hover:rotate-1 transition-all duration-500">
                   <img
-                    src="/logo-monogram.svg"
+                    src={`${import.meta.env.BASE_URL}logo-monogram.svg`}
                     alt="Graphix Monogram"
                     className="w-full h-full object-contain filter drop-shadow-sm"
                   />

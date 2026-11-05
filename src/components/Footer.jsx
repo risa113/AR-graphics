@@ -23,7 +23,7 @@ export default function Footer({ onSelectService }) {
             <div className="flex items-center gap-3.5">
               <div className="w-11 h-11 rounded-xl bg-white border border-[#EAE3F1] shadow-sm p-1.5 flex items-center justify-center">
                 <img
-                  src="/logo-monogram.svg"
+                  src={`${import.meta.env.BASE_URL}logo-monogram.svg`}
                   alt="GRAPHIX Logo"
                   className="w-full h-full object-contain"
                 />

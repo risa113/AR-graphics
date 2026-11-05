@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Phone, ArrowUpRight, Volume2, VolumeX, Sparkles } from 'lucide-react';
+import { Menu, X, Phone, ArrowUpRight, Sparkles } from 'lucide-react';
 import { soundManager } from '../utils/sound';
 
 export default function Header({ onOpenEnquiry }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [soundEnabled, setSoundEnabled] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
 
   useEffect(() => {
@@ -41,11 +40,6 @@ export default function Header({ onOpenEnquiry }) {
     { name: 'Contact', href: '#contact', id: 'contact' },
   ];
 
-  const handleSoundToggle = () => {
-    const newState = soundManager.toggle();
-    setSoundEnabled(newState);
-  };
-
   const handleLinkClick = (e, id) => {
     if (e) e.preventDefault();
     soundManager.playClick();
@@ -80,7 +74,7 @@ export default function Header({ onOpenEnquiry }) {
             {/* Logo Monogram Box */}
             <div className="relative w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-white border border-[#EAE3F1] shadow-[0_4px_16px_rgba(90,45,145,0.12)] p-1.5 transition-all duration-300 group-hover:scale-105 group-hover:shadow-[0_6px_20px_rgba(90,45,145,0.22)] group-hover:border-[#D8C2F0] flex items-center justify-center overflow-hidden">
               <img
-                src="/logo-monogram.svg"
+                src={`${import.meta.env.BASE_URL}logo-monogram.svg`}
                 alt="GRAPHIX Logo"
                 className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110"
               />
@@ -125,19 +119,9 @@ export default function Header({ onOpenEnquiry }) {
 
           {/* Right Action Area - Inspired by Reference */}
           <div className="hidden lg:flex items-center gap-3">
-            {/* Audio Toggle */}
-            <button
-              onClick={handleSoundToggle}
-              className="p-2.5 rounded-full bg-white hover:bg-[#FAF9FC] border border-[#EAE3F1] text-[#625B69] hover:text-[#35204F] transition-all shadow-sm"
-              title={soundEnabled ? 'Mute UI Audio' : 'Enable UI Micro-Sounds'}
-            >
-              {soundEnabled ? <Volume2 className="w-3.5 h-3.5 text-[#5A2D91]" /> : <VolumeX className="w-3.5 h-3.5" />}
-            </button>
-
             {/* Quick Phone Call Pill */}
             <a
               href="tel:+917530073785"
-              onMouseEnter={() => soundManager.playHover()}
               className="flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-semibold text-[#35204F] bg-white hover:bg-[#FAF9FC] border border-[#EAE3F1] transition-all shadow-sm hover:border-[#D8C2F0]"
             >
               <Phone className="w-3.5 h-3.5 text-[#5A2D91]" />
@@ -147,10 +131,8 @@ export default function Header({ onOpenEnquiry }) {
             {/* Signature CTA Pill - Clean White Surface with Purple Border or Gradient Hover */}
             <button
               onClick={() => {
-                soundManager.playClick();
                 if (onOpenEnquiry) onOpenEnquiry();
               }}
-              onMouseEnter={() => soundManager.playHover()}
               className="group relative inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold tracking-wide text-white bg-gradient-to-r from-[#5A2D91] to-[#8E63CB] hover:from-[#6b36ac] hover:to-[#9c71da] transition-all duration-300 shadow-[0_4px_14px_rgba(90,45,145,0.25)] hover:shadow-[0_6px_20px_rgba(90,45,145,0.35)] hover:scale-[1.02] active:scale-95"
             >
               <span>Let's Create Together</span>
@@ -161,14 +143,7 @@ export default function Header({ onOpenEnquiry }) {
           {/* Mobile Actions Button */}
           <div className="flex items-center gap-2 md:hidden shrink-0">
             <button
-              onClick={handleSoundToggle}
-              className="p-2 rounded-full bg-white border border-[#EAE3F1] text-[#625B69]"
-            >
-              {soundEnabled ? <Volume2 className="w-3.5 h-3.5 text-[#5A2D91]" /> : <VolumeX className="w-3.5 h-3.5" />}
-            </button>
-            <button
               onClick={() => {
-                soundManager.playClick();
                 setMobileMenuOpen(!mobileMenuOpen);
               }}
               className="p-2.5 rounded-xl bg-white border border-[#EAE3F1] text-[#35204F] shadow-sm focus:outline-none"

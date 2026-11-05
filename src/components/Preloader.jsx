@@ -75,7 +75,7 @@ export default function Preloader({ onComplete }) {
           {/* Polished AR Monogram in Center */}
           <div className="w-14 h-14 p-1.5 flex items-center justify-center">
             <img
-              src="/logo-monogram.svg"
+              src={`${import.meta.env.BASE_URL}logo-monogram.svg`}
               alt="GRAPHIX Monogram"
               className="w-full h-full object-contain filter drop-shadow-sm scale-95"
             />
