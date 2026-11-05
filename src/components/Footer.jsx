@@ -49,11 +49,11 @@ export default function Footer({ onSelectService }) {
           {/* Brand Info (Col 1-4) */}
           <div className="lg:col-span-4 space-y-5">
             
-            {/* Logo */}
+            {/* Logo on Dark Purple Lavender Background */}
             <div className="flex items-center gap-3.5">
-              <div className="w-11 h-11 rounded-xl bg-white border border-[#EAE3F1] shadow-sm p-1.5 flex items-center justify-center">
+              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#24103D] via-[#5A2D91] to-[#7B42BC] border border-[#D8C2F0]/40 shadow-md p-1.5 flex items-center justify-center">
                 <img
-                  src={`${import.meta.env.BASE_URL}logo-monogram.svg`}
+                  src={`${import.meta.env.BASE_URL}logo-monogram-white.svg`}
                   alt="GRAPHIX Logo"
                   className="w-full h-full object-contain"
                 />

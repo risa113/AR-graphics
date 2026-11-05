@@ -570,3 +570,4 @@ export const seoServicesData = [
     whatsappQuery: 'Hello GRAPHIX, I need urgent Political Banner Design & Printing in Tirunelveli. Please share details.'
   }
 ];
+

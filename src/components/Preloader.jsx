@@ -72,12 +72,12 @@ export default function Preloader({ onComplete }) {
             />
           </svg>
 
-          {/* Polished AR Monogram in Center */}
-          <div className="w-14 h-14 p-1.5 flex items-center justify-center">
+          {/* Polished AR Monogram on Dark Purple Lavender Background */}
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#24103D] via-[#5A2D91] to-[#7B42BC] border border-[#D8C2F0]/40 shadow-lg p-2.5 flex items-center justify-center">
             <img
-              src={`${import.meta.env.BASE_URL}logo-monogram.svg`}
+              src={`${import.meta.env.BASE_URL}logo-monogram-white.svg`}
               alt="GRAPHIX Monogram"
-              className="w-full h-full object-contain filter drop-shadow-sm scale-95"
+              className="w-full h-full object-contain filter drop-shadow-md scale-95"
             />
           </div>
         </div>
@@ -88,23 +88,21 @@ export default function Preloader({ onComplete }) {
           <span className="w-2 h-2 rounded-full bg-[#8E63CB]" />
         </h1>
 
-        {/* Tagline */}
-        <span className="text-[10px] uppercase font-mono tracking-[0.28em] text-[#5A2D91] font-bold mb-6">
+        <p className="text-[10px] font-mono tracking-[0.3em] uppercase text-[#8E63CB] font-bold mb-4">
           CREATE VISIBILITY • BUILD IDENTITY
-        </span>
+        </p>
 
-        {/* Loading Bar Track */}
-        <div className="w-48 h-1 bg-[#EAE3F1] rounded-full overflow-hidden relative mb-3">
-          <div
-            className="h-full bg-gradient-to-r from-[#5A2D91] via-[#8E63CB] to-[#D8C2F0] transition-all duration-75 ease-out"
-            style={{ width: `${percent}%` }}
-          />
-        </div>
-
-        {/* Status Text & Numerical Percentage */}
-        <div className="flex items-center justify-between w-48 text-[9px] font-mono text-[#8A7E99] uppercase tracking-wider">
-          <span>Calibrating Studio</span>
-          <span className="text-[#5A2D91] font-bold">{percent}%</span>
+        {/* Real Progress Metrics */}
+        <div className="flex items-center gap-3">
+          <div className="w-32 h-[3px] bg-[#EAE3F1] rounded-full overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-r from-[#5A2D91] to-[#8E63CB] transition-all duration-75"
+              style={{ width: `${percent}%` }}
+            />
+          </div>
+          <span className="text-xs font-mono font-bold text-[#5A2D91] w-8 text-right">
+            {percent}%
+          </span>
         </div>
       </div>
     </div>

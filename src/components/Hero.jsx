@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, CheckCircle2, ChevronDown, Sparkles, MapPin, Phone, MessageSquare } from 'lucide-react';
+import { ArrowRight, CheckCircle2, ChevronDown, Sparkles, MapPin } from 'lucide-react';
 import { gsap } from 'gsap';
 import SplitType from 'split-type';
 import HeroThreeScene from './HeroThreeScene';
@@ -129,7 +129,7 @@ export default function Hero({ onOpenEnquiry }) {
     <section
       ref={containerRef}
       id="home"
-      className="relative min-h-[740px] max-h-[980px] h-screen flex items-center justify-center pt-24 pb-16 overflow-hidden overflow-x-clip bg-[#FAF9FC] bg-grid-diagonal w-full max-w-[100vw]"
+      className="relative min-h-[780px] max-h-[1020px] h-screen flex items-center justify-center pt-32 sm:pt-36 lg:pt-40 pb-16 overflow-hidden overflow-x-clip bg-[#FAF9FC] bg-grid-diagonal w-full max-w-[100vw]"
     >
       {/* 3D WebGL Three.js Canvas Scene (Bright Studio) */}
       <HeroThreeScene />
@@ -138,15 +138,15 @@ export default function Hero({ onOpenEnquiry }) {
       <div className="absolute top-0 right-0 w-[350px] sm:w-[600px] h-[500px] bg-gradient-to-b from-white/80 via-[#F3ECFA]/30 to-transparent blur-3xl pointer-events-none" />
 
       {/* Hero Foreground Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-4">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <div className="max-w-3xl">
 
-          {/* Location & Studio Badge with Official Monogram */}
-          <div className="hero-badge inline-flex items-center gap-2.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-white/95 border border-[#EAE3F1] shadow-[0_4px_16px_rgba(53,32,79,0.06)] backdrop-blur-md mb-5 max-w-full">
-            <div className="w-5 h-5 rounded-full bg-white border border-[#EAE3F1] p-0.5 flex items-center justify-center shrink-0">
-              <img src={`${import.meta.env.BASE_URL}logo-monogram.svg`} alt="Icon" className="w-full h-full object-contain" />
+          {/* Location & Studio Badge with Official Monogram on Dark Purple Lavender Background */}
+          <div className="hero-badge inline-flex items-center gap-2.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-white/95 border border-[#EAE3F1] shadow-[0_4px_16px_rgba(53,32,79,0.06)] backdrop-blur-md mb-6 max-w-full">
+            <div className="w-5 h-5 rounded-md bg-gradient-to-br from-[#24103D] via-[#5A2D91] to-[#7B42BC] border border-[#D8C2F0]/40 p-0.5 flex items-center justify-center shrink-0 shadow-xs">
+              <img src={`${import.meta.env.BASE_URL}logo-monogram-white.svg`} alt="Icon" className="w-full h-full object-contain" />
             </div>
-            <span className="text-[10px] sm:text-xs uppercase tracking-[0.16em] sm:tracking-[0.2em] font-bold text-[#5A2D91] truncate">
+            <span className="text-[10px] sm:text-xs uppercase tracking-[0.18em] font-bold text-[#5A2D91] truncate">
               Graphix Studio • Melapalayam
             </span>
             <span className="hidden sm:inline-block text-[#8A7E99]">•</span>
@@ -157,7 +157,7 @@ export default function Hero({ onOpenEnquiry }) {
           </div>
 
           {/* Kinetic Word Rotating Ticker */}
-          <div className="flex items-center gap-2 mb-3 text-xs sm:text-sm font-semibold text-[#625B69]">
+          <div className="flex items-center gap-2 mb-4 text-xs sm:text-sm font-semibold text-[#625B69]">
             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#F3ECFA] text-[#5A2D91] text-[11px] font-bold tracking-wider uppercase">
               <Sparkles className="w-3 h-3" /> Specializing In
             </span>
@@ -193,7 +193,7 @@ export default function Hero({ onOpenEnquiry }) {
           </h1>
 
           {/* Official Tagline with High-Impact Letter Spacing */}
-          <div className="hero-tagline inline-flex items-center gap-2 text-xs sm:text-sm md:text-base font-extrabold tracking-[0.22em] text-[#5A2D91] uppercase mb-3">
+          <div className="hero-tagline inline-flex items-center gap-2 text-xs sm:text-sm md:text-base font-extrabold tracking-[0.22em] text-[#5A2D91] uppercase mb-4">
             <span>CREATE VISIBILITY</span>
             <span className="w-1.5 h-1.5 rounded-full bg-[#8E63CB]" />
             <span>BUILD IDENTITY</span>

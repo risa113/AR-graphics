@@ -210,11 +210,11 @@ export default function About({ onOpenEnquiry }) {
               {/* Official Sharp AR Monogram Tile with Subtle Float */}
               <div className="relative w-40 h-40 mx-auto my-6 flex items-center justify-center">
                 <div className="absolute inset-0 rounded-3xl bg-[#5A2D91]/10 blur-xl group-hover:bg-[#5A2D91]/20 transition-colors" />
-                <div className="relative z-10 w-32 h-32 rounded-3xl bg-white p-5 border border-[#EAE3F1] shadow-[0_8px_25px_rgba(90,45,145,0.08)] flex items-center justify-center transform group-hover:scale-105 group-hover:rotate-1 transition-all duration-500">
+                <div className="relative z-10 w-32 h-32 rounded-3xl bg-gradient-to-br from-[#24103D] via-[#5A2D91] to-[#7B42BC] p-6 border border-[#D8C2F0]/40 shadow-[0_12px_32px_rgba(90,45,145,0.35)] flex items-center justify-center transform group-hover:scale-105 group-hover:rotate-1 transition-all duration-500">
                   <img
-                    src={`${import.meta.env.BASE_URL}logo-monogram.svg`}
+                    src={`${import.meta.env.BASE_URL}logo-monogram-white.svg`}
                     alt="Graphix Monogram"
-                    className="w-full h-full object-contain filter drop-shadow-sm"
+                    className="w-full h-full object-contain filter drop-shadow-md"
                   />
                 </div>
               </div>
