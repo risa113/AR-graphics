@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { Menu, X, Phone, ArrowUpRight, Sparkles } from 'lucide-react';
 import { soundManager } from '../utils/sound';
 
@@ -6,22 +7,26 @@ export default function Header({ onOpenEnquiry }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 30);
 
-      const sections = ['home', 'services', 'estimator', 'about', 'work', 'why-us', 'contact'];
-      const scrollPos = window.scrollY + 180;
+      if (location.pathname === '/') {
+        const sections = ['home', 'services', 'local-seo-hub', 'estimator', 'about', 'work', 'why-us', 'contact'];
+        const scrollPos = window.scrollY + 180;
 
-      for (const section of sections) {
-        const el = document.getElementById(section);
-        if (el) {
-          const top = el.offsetTop;
-          const height = el.offsetHeight;
-          if (scrollPos >= top && scrollPos < top + height) {
-            setActiveSection(section);
-            break;
+        for (const section of sections) {
+          const el = document.getElementById(section);
+          if (el) {
+            const top = el.offsetTop;
+            const height = el.offsetHeight;
+            if (scrollPos >= top && scrollPos < top + height) {
+              setActiveSection(section);
+              break;
+            }
           }
         }
       }
@@ -29,15 +34,16 @@ export default function Header({ onOpenEnquiry }) {
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [location.pathname]);
 
   const navLinks = [
-    { name: 'Home', href: '#home', id: 'home' },
-    { name: 'Services', href: '#services', id: 'services' },
-    { name: 'Estimator', href: '#estimator', id: 'estimator' },
-    { name: 'About', href: '#about', id: 'about' },
-    { name: 'Our Work', href: '#work', id: 'work' },
-    { name: 'Contact', href: '#contact', id: 'contact' },
+    { name: 'Home', id: 'home' },
+    { name: 'Services', id: 'services' },
+    { name: 'Tirunelveli Hub', id: 'local-seo-hub' },
+    { name: 'Estimator', id: 'estimator' },
+    { name: 'About', id: 'about' },
+    { name: 'Our Work', id: 'work' },
+    { name: 'Contact', id: 'contact' },
   ];
 
   const handleLinkClick = (e, id) => {
@@ -45,11 +51,43 @@ export default function Header({ onOpenEnquiry }) {
     soundManager.playClick();
     setActiveSection(id);
     setMobileMenuOpen(false);
-    if (window.__lenis) {
-      window.__lenis.scrollTo(`#${id}`);
+
+    if (location.pathname !== '/') {
+      // If on another route, navigate home first then scroll
+      navigate('/');
+      setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) {
+          if (window.__lenis) {
+            window.__lenis.scrollTo(`#${id}`);
+          } else {
+            el.scrollIntoView({ behavior: 'smooth' });
+          }
+        }
+      }, 150);
     } else {
-      const el = document.getElementById(id);
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
+      // Already on home
+      if (window.__lenis) {
+        window.__lenis.scrollTo(`#${id}`);
+      } else {
+        const el = document.getElementById(id);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  };
+
+  const handleLogoClick = (e) => {
+    if (e) e.preventDefault();
+    soundManager.playClick();
+    setMobileMenuOpen(false);
+    if (location.pathname !== '/') {
+      navigate('/');
+    } else {
+      if (window.__lenis) {
+        window.__lenis.scrollTo(0);
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     }
   };
 
@@ -65,11 +103,10 @@ export default function Header({ onOpenEnquiry }) {
         <div className="flex items-center justify-between w-full">
           
           {/* Logo with Polished AR Monogram */}
-          <a
-            href="#home"
-            onClick={(e) => handleLinkClick(e, 'home')}
+          <button
+            onClick={handleLogoClick}
             onMouseEnter={() => soundManager.playHover()}
-            className="group flex items-center gap-2.5 sm:gap-3.5 focus:outline-none shrink-0"
+            className="group flex items-center gap-2.5 sm:gap-3.5 focus:outline-none shrink-0 text-left cursor-pointer"
           >
             {/* Logo Monogram Box */}
             <div className="relative w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-white border border-[#EAE3F1] shadow-[0_4px_16px_rgba(90,45,145,0.12)] p-1.5 transition-all duration-300 group-hover:scale-105 group-hover:shadow-[0_6px_20px_rgba(90,45,145,0.22)] group-hover:border-[#D8C2F0] flex items-center justify-center overflow-hidden">
@@ -90,19 +127,18 @@ export default function Header({ onOpenEnquiry }) {
                 Create Visibility • Build Identity
               </span>
             </div>
-          </a>
+          </button>
 
           {/* Center Navigation - Minimalist, Airy & Editorial */}
           <nav className="hidden md:flex items-center gap-1 bg-white/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-[#EAE3F1] shadow-[0_2px_12px_rgba(53,32,79,0.04)]">
             {navLinks.map((link) => {
-              const isActive = activeSection === link.id;
+              const isActive = location.pathname === '/' && activeSection === link.id;
               return (
-                <a
+                <button
                   key={link.id}
-                  href={link.href}
                   onClick={(e) => handleLinkClick(e, link.id)}
                   onMouseEnter={() => soundManager.playHover()}
-                  className={`relative px-4 py-1.5 text-xs font-semibold tracking-wide rounded-full transition-all duration-300 ${
+                  className={`relative px-3.5 py-1.5 text-xs font-semibold tracking-wide rounded-full transition-all duration-300 cursor-pointer ${
                     isActive
                       ? 'text-white'
                       : 'text-[#625B69] hover:text-[#35204F] hover:bg-[#F3ECFA]/60'
@@ -112,12 +148,12 @@ export default function Header({ onOpenEnquiry }) {
                   {isActive && (
                     <span className="absolute inset-0 bg-[#5A2D91] rounded-full -z-10 shadow-[0_2px_10px_rgba(90,45,145,0.35)] transition-all" />
                   )}
-                </a>
+                </button>
               );
             })}
           </nav>
 
-          {/* Right Action Area - Inspired by Reference */}
+          {/* Right Action Area */}
           <div className="hidden lg:flex items-center gap-3">
             {/* Quick Phone Call Pill */}
             <a
@@ -128,12 +164,12 @@ export default function Header({ onOpenEnquiry }) {
               <span>75300 73785</span>
             </a>
 
-            {/* Signature CTA Pill - Clean White Surface with Purple Border or Gradient Hover */}
+            {/* Signature CTA Pill */}
             <button
               onClick={() => {
                 if (onOpenEnquiry) onOpenEnquiry();
               }}
-              className="group relative inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold tracking-wide text-white bg-gradient-to-r from-[#5A2D91] to-[#8E63CB] hover:from-[#6b36ac] hover:to-[#9c71da] transition-all duration-300 shadow-[0_4px_14px_rgba(90,45,145,0.25)] hover:shadow-[0_6px_20px_rgba(90,45,145,0.35)] hover:scale-[1.02] active:scale-95"
+              className="group relative inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold tracking-wide text-white bg-gradient-to-r from-[#5A2D91] to-[#8E63CB] hover:from-[#6b36ac] hover:to-[#9c71da] transition-all duration-300 shadow-[0_4px_14px_rgba(90,45,145,0.25)] hover:shadow-[0_6px_20px_rgba(90,45,145,0.35)] hover:scale-[1.02] active:scale-95 cursor-pointer"
             >
               <span>Let's Create Together</span>
               <ArrowUpRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -146,33 +182,32 @@ export default function Header({ onOpenEnquiry }) {
               onClick={() => {
                 setMobileMenuOpen(!mobileMenuOpen);
               }}
-              className="p-2.5 rounded-xl bg-white border border-[#EAE3F1] text-[#35204F] shadow-sm focus:outline-none"
+              className="p-2.5 rounded-xl bg-white border border-[#EAE3F1] text-[#35204F] shadow-sm focus:outline-none cursor-pointer"
               aria-label="Toggle navigation menu"
             >
-              {mobileMenuOpen ? <X className="w-5 h-5 text-[#5A2D91]" /> : <Menu className="w-5 h-5" />}
+              {mobileMenuOpen ? <X className="w-5 h-5 text-[#5A2D91]" /> : <Menu className="w-5 h-5 text-[#35204F]" />}
             </button>
           </div>
 
         </div>
       </div>
 
-      {/* Mobile Drawer Menu - Clean White Surface */}
+      {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
         <div className="md:hidden mt-3 mx-4 p-5 rounded-2xl bg-white/98 backdrop-blur-2xl border border-[#EAE3F1] shadow-[0_20px_40px_rgba(53,32,79,0.12)] animate-in fade-in slide-in-from-top-4 duration-300">
           <nav className="flex flex-col gap-1.5">
             {navLinks.map((link) => (
-              <a
+              <button
                 key={link.id}
-                href={link.href}
                 onClick={(e) => handleLinkClick(e, link.id)}
-                className={`px-4 py-2.5 rounded-xl text-sm font-semibold transition-all ${
-                  activeSection === link.id
+                className={`px-4 py-2.5 rounded-xl text-sm font-semibold transition-all text-left cursor-pointer ${
+                  location.pathname === '/' && activeSection === link.id
                     ? 'bg-[#5A2D91] text-white shadow-sm'
                     : 'text-[#625B69] hover:text-[#35204F] hover:bg-[#F3ECFA]/60'
                 }`}
               >
                 {link.name}
-              </a>
+              </button>
             ))}
           </nav>
 
@@ -191,7 +226,7 @@ export default function Header({ onOpenEnquiry }) {
                 setMobileMenuOpen(false);
                 if (onOpenEnquiry) onOpenEnquiry();
               }}
-              className="flex items-center justify-center gap-2 py-3 rounded-xl bg-gradient-to-r from-[#5A2D91] to-[#8E63CB] text-xs font-bold text-white shadow-md"
+              className="flex items-center justify-center gap-2 py-3 rounded-xl bg-gradient-to-r from-[#5A2D91] to-[#8E63CB] text-xs font-bold text-white shadow-md cursor-pointer"
             >
               <Sparkles className="w-4 h-4" />
               <span>Let's Create Together</span>

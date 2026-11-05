@@ -1,12 +1,42 @@
 import React from 'react';
-import { Phone, MessageSquare, MapPin, ArrowUp } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Phone, MessageSquare, MapPin, ArrowUp, Sparkles, Navigation } from 'lucide-react';
 import { servicesData } from '../data/servicesData';
+import { seoServicesData } from '../data/seoServicesData';
 import { soundManager } from '../utils/sound';
 
 export default function Footer({ onSelectService }) {
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const scrollToTop = () => {
     soundManager.playClick();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (window.__lenis) {
+      window.__lenis.scrollTo(0);
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const handleNavAnchor = (e, targetId) => {
+    if (e) e.preventDefault();
+    soundManager.playClick();
+    if (location.pathname !== '/') {
+      navigate('/');
+      setTimeout(() => {
+        const el = document.getElementById(targetId);
+        if (el) {
+          if (window.__lenis) window.__lenis.scrollTo(`#${targetId}`);
+          else el.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 150);
+    } else {
+      const el = document.getElementById(targetId);
+      if (el) {
+        if (window.__lenis) window.__lenis.scrollTo(`#${targetId}`);
+        else el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
   };
 
   return (
@@ -14,7 +44,7 @@ export default function Footer({ onSelectService }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Main Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 pb-16 border-b border-[#EAE3F1]">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-16 border-b border-[#EAE3F1]">
           
           {/* Brand Info (Col 1-4) */}
           <div className="lg:col-span-4 space-y-5">
@@ -43,7 +73,7 @@ export default function Footer({ onSelectService }) {
             <p className="text-xs sm:text-sm text-[#625B69] leading-relaxed">
               "Create Visibility. Build Identity."
               <br />
-              Melapalayam’s dedicated studio for high-aesthetic graphic design, weather-resistant flex, precision vinyl, 3D acrylic LED signage, and luxury print stationery.
+              Melapalayam’s dedicated studio for high-aesthetic graphic design, weather-resistant star flex, precision vinyl, 3D acrylic LED signage, and luxury print stationery across Tirunelveli district.
             </p>
 
             {/* Contact Quick Pills */}
@@ -68,7 +98,7 @@ export default function Footer({ onSelectService }) {
 
               <div className="flex items-start gap-2.5 text-xs text-[#625B69]">
                 <MapPin className="w-3.5 h-3.5 text-[#5A2D91] shrink-0 mt-0.5" />
-                <span>Hameem Puram 7th Street, Annai Hajira College Road, Melapalayam, Tirunelveli</span>
+                <span>Hameem Puram 7th Street, Annai Hajira College Road, Melapalayam, Tirunelveli 627005</span>
               </div>
             </div>
 
@@ -81,81 +111,110 @@ export default function Footer({ onSelectService }) {
             </h4>
             <ul className="space-y-2 text-xs text-[#625B69]">
               <li>
-                <a href="#home" className="hover:text-[#5A2D91] transition-colors">Home</a>
+                <button onClick={(e) => handleNavAnchor(e, 'home')} className="hover:text-[#5A2D91] transition-colors cursor-pointer">
+                  Home
+                </button>
               </li>
               <li>
-                <a href="#services" className="hover:text-[#5A2D91] transition-colors">All 11 Services</a>
+                <button onClick={(e) => handleNavAnchor(e, 'services')} className="hover:text-[#5A2D91] transition-colors cursor-pointer">
+                  All 11 Services
+                </button>
               </li>
               <li>
-                <a href="#estimator" className="hover:text-[#5A2D91] transition-colors">Cost Estimator</a>
+                <button onClick={(e) => handleNavAnchor(e, 'local-seo-hub')} className="hover:text-[#5A2D91] transition-colors cursor-pointer">
+                  Tirunelveli Hub
+                </button>
               </li>
               <li>
-                <a href="#about" className="hover:text-[#5A2D91] transition-colors">About GRAPHIX</a>
+                <button onClick={(e) => handleNavAnchor(e, 'estimator')} className="hover:text-[#5A2D91] transition-colors cursor-pointer">
+                  Cost Estimator
+                </button>
               </li>
               <li>
-                <a href="#work" className="hover:text-[#5A2D91] transition-colors">Design Repertoire</a>
+                <button onClick={(e) => handleNavAnchor(e, 'about')} className="hover:text-[#5A2D91] transition-colors cursor-pointer">
+                  About GRAPHIX
+                </button>
               </li>
               <li>
-                <a href="#why-us" className="hover:text-[#5A2D91] transition-colors">Why Choose Us</a>
+                <button onClick={(e) => handleNavAnchor(e, 'work')} className="hover:text-[#5A2D91] transition-colors cursor-pointer">
+                  Design Repertoire
+                </button>
               </li>
               <li>
-                <a href="#contact" className="hover:text-[#5A2D91] transition-colors">Contact Studio</a>
+                <button onClick={(e) => handleNavAnchor(e, 'contact')} className="hover:text-[#5A2D91] transition-colors cursor-pointer">
+                  Contact Studio
+                </button>
               </li>
             </ul>
           </div>
 
-          {/* Services Directory (Col 7-10) */}
-          <div className="lg:col-span-4 space-y-4">
-            <h4 className="text-xs font-mono font-bold tracking-widest uppercase text-[#35204F]">
-              Printing & Design Services
+          {/* Tirunelveli Local SEO Hub Pages (Col 7-9) */}
+          <div className="lg:col-span-3 space-y-4">
+            <h4 className="text-xs font-mono font-bold tracking-widest uppercase text-[#35204F] flex items-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5 text-[#5A2D91]" />
+              <span>Tirunelveli Authority</span>
             </h4>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs text-[#625B69]">
-              {servicesData.map((s) => (
-                <button
-                  key={s.id}
-                  onClick={() => {
-                    if (onSelectService) onSelectService(s);
-                  }}
-                  className="text-left hover:text-[#5A2D91] transition-colors truncate"
-                >
-                  {s.title}
-                </button>
+            <ul className="space-y-2 text-xs text-[#625B69]">
+              {seoServicesData.map((svc) => (
+                <li key={svc.slug}>
+                  <Link
+                    to={`/${svc.slug}`}
+                    className="hover:text-[#5A2D91] transition-colors truncate block"
+                  >
+                    {svc.title}
+                  </Link>
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
 
-          {/* Direct CTA (Col 11-12) */}
-          <div className="lg:col-span-2 space-y-4">
+          {/* Production Capabilities & Urgent Orders (Col 10-12) */}
+          <div className="lg:col-span-3 space-y-4">
             <h4 className="text-xs font-mono font-bold tracking-widest uppercase text-[#35204F]">
-              Fast Order
+              Direct Inquiries
             </h4>
-            <p className="text-[11px] text-[#625B69]">
-              Need urgent flex printing or visiting cards in Tirunelveli today?
+            <p className="text-xs text-[#625B69] leading-relaxed">
+              Same-day flex printing, banner designing, or luxury business cards in Melapalayam & Tirunelveli?
             </p>
+            
             <a
-              href="https://wa.me/917530073785?text=Hello%20GRAPHIX,%20I%20have%20an%20urgent%20print%20job%20in%20Melapalayam."
+              href="https://wa.me/917530073785?text=Hello%20GRAPHIX,%20I%20have%20an%20urgent%20design%20and%20printing%20order."
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#25D366] to-[#128C7E] text-xs font-bold text-white shadow-sm hover:opacity-95 transition-opacity"
             >
               <MessageSquare className="w-3.5 h-3.5" />
-              <span>Instant Chat</span>
+              <span>WhatsApp Studio (+91 75300 73785)</span>
             </a>
+
+            <div className="pt-2">
+              <a
+                href="https://maps.google.com/?q=8.697471,77.712613"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-xs text-[#5A2D91] font-bold hover:underline"
+              >
+                <Navigation className="w-3 h-3" />
+                <span>Get Driving Directions</span>
+              </a>
+            </div>
           </div>
 
         </div>
 
         {/* Bottom Copyright & Back to Top */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#8A7E99]">
-          <div className="flex items-center gap-1.5">
+          <div className="flex flex-wrap items-center gap-1.5">
             <span>© {new Date().getFullYear()} GRAPHIX. All Rights Reserved.</span>
             <span>•</span>
             <span className="text-[#5A2D91] font-semibold">Melapalayam, Tirunelveli, Tamil Nadu</span>
+            <span>•</span>
+            <span>CIN / Reg: Tirunelveli Local Authority</span>
           </div>
 
           <button
             onClick={scrollToTop}
-            className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white hover:bg-[#FAF9FC] border border-[#EAE3F1] text-[#35204F] transition-colors shadow-sm"
+            className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white hover:bg-[#FAF9FC] border border-[#EAE3F1] text-[#35204F] transition-colors shadow-sm cursor-pointer"
           >
             <span>Back to Top</span>
             <ArrowUp className="w-3.5 h-3.5 text-[#5A2D91]" />

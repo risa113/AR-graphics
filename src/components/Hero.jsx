@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, CheckCircle2, ChevronDown, Sparkles, MapPin, Phone } from 'lucide-react';
+import { ArrowRight, CheckCircle2, ChevronDown, Sparkles, MapPin, Phone, MessageSquare } from 'lucide-react';
 import { gsap } from 'gsap';
 import SplitType from 'split-type';
 import HeroThreeScene from './HeroThreeScene';
@@ -13,12 +13,12 @@ export default function Hero({ onOpenEnquiry }) {
   const [tickerIndex, setTickerIndex] = useState(0);
 
   const specializations = [
-    '3D Acrylic LED Signboards',
+    'Graphic Design in Tirunelveli',
     'Heavy Star Flex Printing',
-    'Laser & Plotter Vinyl Cuts',
-    'Executive Visiting Cards',
-    'Custom Sublimation Gifts',
-    'Multi-Color Pamphlets'
+    '3D Acrylic LED Signboards',
+    'Wedding & Political Banners',
+    'Luxury Visiting Cards',
+    'Vinyl Plotter & Vehicle Graphics'
   ];
 
   useEffect(() => {
@@ -114,13 +114,13 @@ export default function Hero({ onOpenEnquiry }) {
     };
   }, []);
 
-  const handleScrollToServices = (e) => {
+  const handleScrollToSection = (selector) => (e) => {
     e.preventDefault();
     soundManager.playClick();
     if (window.__lenis) {
-      window.__lenis.scrollTo('#services');
+      window.__lenis.scrollTo(selector);
     } else {
-      const el = document.getElementById('services');
+      const el = document.querySelector(selector);
       if (el) el.scrollIntoView({ behavior: 'smooth' });
     }
   };
@@ -161,7 +161,7 @@ export default function Hero({ onOpenEnquiry }) {
             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#F3ECFA] text-[#5A2D91] text-[11px] font-bold tracking-wider uppercase">
               <Sparkles className="w-3 h-3" /> Specializing In
             </span>
-            <div className="h-6 overflow-hidden relative inline-block min-w-[200px]">
+            <div className="h-6 overflow-hidden relative inline-block min-w-[220px]">
               <AnimatePresence mode="wait">
                 <motion.span
                   key={tickerIndex}
@@ -180,14 +180,14 @@ export default function Hero({ onOpenEnquiry }) {
           {/* Main Headline */}
           <h1 className="text-3xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-[#35204F] leading-[1.08] mb-4 sm:mb-5">
             <span ref={headlineSolidRef} className="block">
-              YOUR IDEAS.
+              WE TURN IDEAS INTO
             </span>
             <div className="overflow-hidden inline-block">
               <span
                 ref={headlineGradientRef}
                 className="block text-transparent bg-clip-text bg-gradient-to-r from-[#35204F] via-[#5A2D91] to-[#8E63CB]"
               >
-                OUR DESIGN.
+                VISUAL IMPACT.
               </span>
             </div>
           </h1>
@@ -199,47 +199,45 @@ export default function Hero({ onOpenEnquiry }) {
             <span>BUILD IDENTITY</span>
           </div>
 
-          {/* Supporting Text */}
+          {/* Supporting Text — Optimized for Tirunelveli Local Authority */}
           <p className="hero-description text-xs sm:text-base text-[#625B69] max-w-xl leading-relaxed mb-8">
-            Melapalayam's flagship creative design and high-precision print production lab. From heavy-duty star flex banners and 3D acrylic LED signage to luxury visiting cards and custom corporate gifts.
+            Creative Graphic Design, Banner Design & Professional Flex Printing in Tirunelveli. Operating from Melapalayam with same-day print turnaround and state-of-the-art Japanese wide-format machines.
           </p>
 
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mb-10 w-full max-w-md sm:max-w-none">
-            {/* Primary CTA */}
+            {/* Primary CTA: Explore Our Work */}
             <a
-              href="#services"
-              onClick={handleScrollToServices}
+              href="#portfolio"
+              onClick={handleScrollToSection('#portfolio')}
               onMouseEnter={() => soundManager.playHover()}
               className="hero-btn-item group relative inline-flex items-center justify-center gap-3 px-7 py-3.5 sm:px-8 sm:py-4 rounded-full text-xs sm:text-sm font-bold tracking-wide text-white bg-gradient-to-r from-[#5A2D91] to-[#8E63CB] hover:from-[#6c36ac] hover:to-[#9c71da] shadow-[0_6px_20px_rgba(90,45,145,0.25)] hover:shadow-[0_8px_25px_rgba(90,45,145,0.35)] transition-all duration-300 hover:scale-[1.02] active:scale-95 text-center"
             >
-              <span>Explore Our Services</span>
+              <span>Explore Our Work</span>
               <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
             </a>
 
-            {/* Secondary CTA */}
-            <button
-              onClick={() => {
-                soundManager.playClick();
-                if (onOpenEnquiry) onOpenEnquiry();
-              }}
+            {/* Secondary CTA: Get a Design Quote */}
+            <a
+              href="#estimator"
+              onClick={handleScrollToSection('#estimator')}
               onMouseEnter={() => soundManager.playHover()}
               className="hero-btn-item inline-flex items-center justify-center gap-2 px-7 py-3.5 sm:px-8 sm:py-4 rounded-full text-xs sm:text-sm font-bold tracking-wide text-[#35204F] bg-white border border-[#EAE3F1] hover:border-[#D8C2F0] hover:bg-[#FAF9FC] transition-all duration-300 shadow-sm hover:scale-[1.02] active:scale-95 text-center"
             >
               <Sparkles className="w-4 h-4 text-[#5A2D91]" />
-              <span>Let's Create Together</span>
-            </button>
+              <span>Get a Design Quote</span>
+            </a>
 
-            {/* Direct Contact */}
+            {/* Direct WhatsApp CTA */}
             <a
-              href="https://wa.me/917530073785?text=Hello%20GRAPHIX,%20I%20would%20like%20to%20enquire%20about%20creative%20design%20and%20printing%20services."
+              href="https://wa.me/917530073785?text=Hello%20GRAPHIX,%20I%20would%20like%20to%20enquire%20about%20creative%20graphic%20design%20and%20flex%20printing%20in%20Tirunelveli."
               target="_blank"
               rel="noopener noreferrer"
               onMouseEnter={() => soundManager.playHover()}
               className="hero-btn-item inline-flex items-center justify-center gap-2 px-4 py-2 sm:py-4 rounded-full text-xs font-semibold text-[#625B69] hover:text-[#35204F] transition-colors text-center"
             >
               <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
-              <span>WhatsApp: +91 75300 73785</span>
+              <span>Contact Us on WhatsApp</span>
             </a>
           </div>
 
@@ -251,11 +249,11 @@ export default function Hero({ onOpenEnquiry }) {
             </div>
             <div className="hero-guarantee-pill flex items-center gap-2.5">
               <CheckCircle2 className="w-4 h-4 text-[#8E63CB] shrink-0" />
-              <span className="text-xs font-medium text-[#35204F]">100% Design-to-Print Lab</span>
+              <span className="text-xs font-medium text-[#35204F]">100% In-House Production Lab</span>
             </div>
             <div className="hero-guarantee-pill flex items-center gap-2.5">
               <CheckCircle2 className="w-4 h-4 text-[#5A2D91] shrink-0" />
-              <span className="text-xs font-medium text-[#35204F]">Tirunelveli Fast Dispatch</span>
+              <span className="text-xs font-medium text-[#35204F]">Tirunelveli Express Dispatch</span>
             </div>
           </div>
 
